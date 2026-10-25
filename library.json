@@ -1,0 +1,216 @@
+{
+  "equipment": {
+    "db_pair": [
+      7.5,
+      15,
+      20,
+      25,
+      35,
+      45,
+      60,
+      70
+    ],
+    "db": [
+      7.5,
+      15,
+      20,
+      25,
+      35,
+      45,
+      60,
+      70
+    ],
+    "kb": [
+      16,
+      24
+    ]
+  },
+  "exercises": {
+    "goblet-squat": {
+      "name": "Goblet squat",
+      "pattern": "squat",
+      "row1": "kg",
+      "cues": [
+        "Bell at your chest, elbows down.",
+        "Sit between your heels, chest tall.",
+        "Knees track over your middle toes."
+      ],
+      "x": "Heels lifting? Widen your stance slightly.",
+      "setup": "Bell held by the horns · feet just wider than hips",
+      "video": {
+        "q": "goblet squat Squat University",
+        "src": "Squat University",
+        "len": "~3 min",
+        "status": "candidate"
+      }
+    },
+    "pullup-negative": {
+      "name": "Pull-up negative",
+      "pattern": "pull",
+      "row1": "sec",
+      "cues": [
+        "Step up so your chin starts over the bar.",
+        "Brace, then lower as slowly as you can.",
+        "Step back up for each rep."
+      ],
+      "x": "Dropping fast? End the set.",
+      "setup": "Box or bench under the bar · overhand, hands just outside shoulders",
+      "next_level": "full pull-ups",
+      "video": {
+        "q": "pull up negatives form E3 Rehab",
+        "src": "E3 Rehab",
+        "len": "~3 min",
+        "status": "candidate"
+      }
+    },
+    "db-bench": {
+      "name": "Dumbbell bench press",
+      "pattern": "push",
+      "row1": "lb",
+      "cues": [
+        "Feet flat, shoulder blades pinched.",
+        "Lower to chest level, elbows about 45°.",
+        "Press up and slightly in."
+      ],
+      "x": "Shoulders shrugging? Reset the blades.",
+      "setup": "Blackwing flat · bells on knees, kick back to start",
+      "video": {
+        "q": "dumbbell bench press technique Jeff Nippard",
+        "src": "Jeff Nippard",
+        "len": "~2 min",
+        "status": "candidate"
+      }
+    },
+    "db-rdl": {
+      "name": "Dumbbell Romanian deadlift",
+      "pattern": "hinge",
+      "row1": "lb",
+      "cues": [
+        "Soft knees, push your hips back.",
+        "Bells slide down the front of your legs.",
+        "Stop at the hamstring stretch, stand tall."
+      ],
+      "x": "Back rounding? Stop higher.",
+      "setup": "Feet hip-width · bells in front of thighs, overhand grip",
+      "video": {
+        "q": "dumbbell romanian deadlift form Jeff Nippard",
+        "src": "Jeff Nippard",
+        "len": "~2 min",
+        "status": "candidate"
+      }
+    },
+    "kb-swing": {
+      "name": "Kettlebell swing",
+      "pattern": "hinge",
+      "row1": "kg",
+      "cues": [
+        "Bell a foot in front; hinge and grab it.",
+        "Hike it back high between your thighs.",
+        "Snap hips forward, bell floats to chest height.",
+        "Arms are ropes; the hips do the work."
+      ],
+      "x": "Lifting with your arms? Hinge more.",
+      "setup": "Feet shoulder-width · shoes on",
+      "video": {
+        "q": "kettlebell swing tutorial StrongFirst",
+        "src": "StrongFirst",
+        "len": "~3 min",
+        "status": "candidate"
+      }
+    },
+    "kb-deadlift": {
+      "name": "Kettlebell deadlift",
+      "pattern": "hinge",
+      "row1": "kg",
+      "cues": [
+        "Bell between your mid-feet.",
+        "Hips back, flat back, grip hard.",
+        "Push the floor away, stand tall."
+      ],
+      "x": "Squatting it up? Hips back more.",
+      "setup": "Feet hip-width, bell under your laces",
+      "video": {
+        "q": "kettlebell deadlift form tutorial",
+        "src": "",
+        "len": "",
+        "status": "pending"
+      }
+    },
+    "db-row": {
+      "name": "One-arm dumbbell row",
+      "pattern": "pull",
+      "row1": "lb",
+      "cues": [
+        "Knee and hand on the bench, back flat.",
+        "Pull your elbow toward your hip.",
+        "Pause one second at the top."
+      ],
+      "x": "Twisting your torso? Go lighter.",
+      "setup": "Blackwing flat · same-side knee and hand on the pad",
+      "video": {
+        "q": "one arm dumbbell row form E3 Rehab",
+        "src": "E3 Rehab",
+        "len": "~2 min",
+        "status": "candidate"
+      }
+    },
+    "incline-db-press": {
+      "name": "Incline dumbbell press",
+      "pattern": "push",
+      "row1": "lb",
+      "cues": [
+        "Bench about 30° (2nd or 3rd notch).",
+        "Lower to upper chest, elbows under wrists.",
+        "Press up; don't clank the bells."
+      ],
+      "x": "Back arching? Lower the incline.",
+      "setup": "Blackwing at about 30° · bells on knees to start",
+      "video": {
+        "q": "incline dumbbell press form Jeff Nippard",
+        "src": "Jeff Nippard",
+        "len": "~2 min",
+        "status": "candidate"
+      }
+    },
+    "split-squat": {
+      "name": "Split squat",
+      "pattern": "squat",
+      "row1": "lb",
+      "cues": [
+        "Long stance; hold the bench for balance.",
+        "Drop the back knee straight down.",
+        "Front heel stays down; drive through it."
+      ],
+      "x": "Back toe sore? Swap to a goblet squat.",
+      "setup": "Hold the bench for balance at first",
+      "video": {
+        "q": "split squat form Squat University",
+        "src": "Squat University",
+        "len": "~2 min",
+        "status": "candidate"
+      },
+      "first_load": {
+        "db_pair": 7.5
+      }
+    },
+    "farmer-carry": {
+      "name": "Farmer carry",
+      "pattern": "carry",
+      "row1": "lb",
+      "row2": "steps",
+      "cues": [
+        "Pick up like a deadlift, flat back.",
+        "Tall posture, shoulders down and back.",
+        "Short, steady steps; breathe."
+      ],
+      "x": "Leaning or shuffling? Go lighter.",
+      "setup": "Clear a straight path, shoes on",
+      "video": {
+        "q": "farmers carry how to Squat University",
+        "src": "Squat University",
+        "len": "~2 min",
+        "status": "candidate"
+      }
+    }
+  }
+}
