@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Workout TV">
+<meta name="theme-color" content="#0e0f10">
+<title>Workout TV</title>
+<style>
+@font-face { font-family: Barlow; font-weight: 500; src: url(fonts/Barlow-500.woff2) format("woff2"); }
+@font-face { font-family: Barlow; font-weight: 600; src: url(fonts/Barlow-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; src: url(fonts/BarlowCondensed-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url(fonts/BarlowCondensed-700.woff2) format("woff2"); }
+:root {
+  --bg: #0e0f10; --panel: #1a1c1e; --line: #2c2f33; --text: #f3f3f1; --dim: #a9adb2;
+  --accent: #ffd34d; --bad: #ff8a73; --good: #8fdc9c;
+  /* Sizes follow the screen, so a mirrored phone and a TV look the same. */
+  --u: min(1vw, 1.78vh);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+body { font-family: Barlow, system-ui, sans-serif; font-weight: 500; font-size: calc(var(--u) * 2.3); line-height: 1.3;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+h1, h2, .num, button { font-family: "Barlow Condensed", Barlow, sans-serif; }
+button { font-weight: 700; color: inherit; background: none; border: 0; cursor: pointer; }
+
+#app { position: fixed; inset: 0; display: flex; flex-direction: column;
+  padding: calc(var(--u) * 2) calc(var(--u) * 3) calc(var(--u) * 1.2);
+  padding-left: max(calc(var(--u) * 3), env(safe-area-inset-left)); padding-right: max(calc(var(--u) * 3), env(safe-area-inset-right)); }
+.slide { flex: 1; min-height: 0; display: flex; }
+
+/* Home: pick a day */
+.home { flex-direction: column; justify-content: center; gap: calc(var(--u) * 3); }
+.home h1 { font-size: calc(var(--u) * 6.4); line-height: 1; }
+.home p { color: var(--dim); font-size: calc(var(--u) * 2.4); }
+.days { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 2.4); }
+.day { text-align: left; background: var(--panel); border: 2px solid var(--line); border-radius: calc(var(--u) * 1.6);
+  padding: calc(var(--u) * 2.4) calc(var(--u) * 2.8); font-family: Barlow, sans-serif; font-weight: 500; }
+.day:focus-visible, .day:active { border-color: var(--accent); outline: none; }
+.day b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 4.4); line-height: 1.05; }
+.day span { display: block; color: var(--dim); font-size: calc(var(--u) * 2); margin-top: calc(var(--u) * .8); }
+
+/* Warm-up and finisher slides */
+.list { flex-direction: column; justify-content: center; gap: calc(var(--u) * 2.2); max-width: calc(var(--u) * 90); }
+.kicker { color: var(--accent); font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; font-size: calc(var(--u) * 2.2); }
+.list h1 { font-size: calc(var(--u) * 6); line-height: 1; }
+.list ol { list-style: none; display: grid; gap: calc(var(--u) * 1.1); font-size: calc(var(--u) * 3.2); }
+.list li::before { content: "•"; color: var(--accent); margin-right: calc(var(--u) * 1.4); }
+.list .sub { color: var(--dim); font-size: calc(var(--u) * 2.6); }
+
+/* Exercise slides: video left, teaching right */
+.ex { display: grid; grid-template-columns: 54fr 46fr; gap: calc(var(--u) * 3); align-items: start; width: 100%; }
+.media { display: flex; flex-direction: column; gap: calc(var(--u) * 1); }
+.video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: calc(var(--u) * 1.2); overflow: hidden; }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video .none { position: absolute; inset: 0; display: grid; place-items: center; color: var(--dim); text-align: center; padding: 8%; }
+.credit { color: var(--dim); font-size: calc(var(--u) * 1.7); }
+.dose { display: flex; gap: calc(var(--u) * 1.2); flex-wrap: wrap; }
+.chip { background: var(--panel); border: 1px solid var(--line); border-radius: calc(var(--u) * 1); padding: calc(var(--u) * .7) calc(var(--u) * 1.4); }
+.chip .num { color: var(--accent); font-weight: 700; font-size: calc(var(--u) * 3.2); line-height: 1; }
+.chip small { display: block; color: var(--dim); font-size: calc(var(--u) * 1.6); }
+.pair { color: var(--dim); font-size: calc(var(--u) * 1.8); }
+.pair b { color: var(--text); font-weight: 600; }
+
+.teach { display: flex; flex-direction: column; gap: calc(var(--u) * 1.3); }
+.teach h1 { font-size: calc(var(--u) * 4.6); line-height: 1; }
+.setup { color: var(--dim); font-size: calc(var(--u) * 1.9); }
+.setup b { color: var(--text); font-weight: 600; }
+.steps { list-style: none; counter-reset: s; display: grid; gap: calc(var(--u) * 1); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: calc(var(--u) * 4) 1fr; align-items: baseline; font-size: calc(var(--u) * 2.4); line-height: 1.2; }
+.steps li::before { content: counter(s); font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--bg);
+  background: var(--accent); width: calc(var(--u) * 3); height: calc(var(--u) * 3); border-radius: 50%;
+  display: grid; place-items: center; font-size: calc(var(--u) * 2.3); align-self: start; }
+.mistake { border-left: calc(var(--u) * .5) solid var(--bad); padding-left: calc(var(--u) * 1.4); font-size: calc(var(--u) * 2.1); }
+.mistake small { display: block; color: var(--bad); font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; font-size: calc(var(--u) * 1.8); }
+.breath { color: var(--good); font-size: calc(var(--u) * 1.7); }
+
+/* Bottom bar */
+nav { display: flex; align-items: center; gap: calc(var(--u) * 1.6); padding-top: calc(var(--u) * 1.4); }
+nav button { font-size: calc(var(--u) * 2.4); padding: calc(var(--u) * .6) calc(var(--u) * 2); border-radius: calc(var(--u) * 1);
+  background: var(--panel); border: 1px solid var(--line); min-height: 44px; }
+nav .next { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+nav .home-btn { font-size: calc(var(--u) * 2.2); color: var(--dim); }
+.dots { flex: 1; display: flex; justify-content: center; gap: calc(var(--u) * .9); }
+.dots i { width: calc(var(--u) * 1.2); height: calc(var(--u) * 1.2); border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+.upnext { color: var(--dim); font-size: calc(var(--u) * 1.9); text-align: right; }
+nav button:disabled { opacity: .3; }
+
+/* Phone held upright: stack, and ask for landscape */
+@media (orientation: portrait) {
+  :root { --u: 1.9vw; }
+  body { overflow: auto; } #app { position: static; min-height: 100%; }
+  .ex { grid-template-columns: 1fr; }
+  .days { grid-template-columns: 1fr; }
+  .rotate { display: block !important; }
+}
+.rotate { display: none; color: var(--accent); font-size: calc(var(--u) * 2.6); margin-bottom: calc(var(--u) * 2); }
+</style></head><body>
+<div id="app"></div>
+<noscript>Turn on JavaScript to use the slideshow.</noscript>
+<script>
+const DATA = __DATA__;
+const app = document.getElementById("app");
+let day = null, i = 0, slides = [];
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const range = r => Array.isArray(r) ? (r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : r;
+const unit = ex => ex.row2 === "steps" ? "steps" : "reps";
+
+function buildSlides(key) {
+  const d = DATA.plan.days[key];
+  const list = [{kind: "warmup", d}];
+  d.exercises.forEach((e, n) => {
+    const partner = e.pair && d.exercises.find(o => o !== e && o.pair === e.pair);
+    list.push({kind: "ex", e, ex: DATA.exercises[e.id], partner: partner && DATA.exercises[partner.id], first: partner && d.exercises.indexOf(partner) > n});
+  });
+  if (d.finisher && d.finisher.text) list.push({kind: "finisher", d});
+  return list;
+}
+
+function video(v) {
+  const id = v && v.tv && v.tv.youtube_id;
+  if (!id) return `<div class="none">Video still being chosen.</div>`;
+  // Muted autoplay is the only autoplay iOS allows; tap the player for sound.
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${id}`;
+  return `<iframe src="${src}" title="Demo video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+}
+
+function slideHTML(s) {
+  if (s.kind === "warmup") return `<section class="slide list">
+    <div class="rotate">Turn your phone sideways for the TV.</div>
+    <div class="kicker">${esc(s.d.title)} · Warm-up first</div>
+    <h1>Warm up, about 8 minutes</h1>
+    <ol>${s.d.warmup.map(w => `<li>${esc(w)}</li>`).join("")}</ol>
+    <p class="sub">Then tap Next for the first exercise.</p></section>`;
+  if (s.kind === "finisher") return `<section class="slide list">
+    <div class="kicker">Finisher</div>
+    <h1>${esc(s.d.finisher.text)}</h1>
+    <p class="sub">${esc(s.d.finisher.detail)}</p>
+    <p class="sub">Then write your numbers on the sheet. Nice work.</p></section>`;
+  const {e, ex, partner} = s;
+  const pair = partner ? `<p class="pair">Superset ${esc(e.pair)}: one set of this, then one set of <b>${esc(partner.name)}</b>, then rest. Repeat.</p>` : "";
+  const src = ex.video && ex.video.tv ? `Video: ${esc(ex.video.tv.src)} · tap it for sound` : "";
+  return `<section class="slide ex">
+    <div class="media">
+      <div class="video">${video(ex.video)}</div>
+      <div class="credit">${src}</div>
+      <div class="dose">
+        <div class="chip"><span class="num">${e.sets}</span><small>sets</small></div>
+        <div class="chip"><span class="num">${range(e.reps)}</span><small>${unit(ex)}${e.extra ? " · " + esc(e.extra) : ""}</small></div>
+        <div class="chip"><span class="num">${e.rest} s</span><small>rest</small></div>
+      </div>
+      ${pair}
+    </div>
+    <div class="teach">
+      <h1>${esc(ex.name)}</h1>
+      <p class="setup"><b>Setup:</b> ${esc(ex.setup).replace(/ · /g, ", ")}</p>
+      <ol class="steps">${ex.cues.map(c => `<li>${esc(c)}</li>`).join("")}</ol>
+      <p class="mistake"><small>Watch for</small>${esc(ex.x)}</p>
+      <p class="breath">Breathe out on the hard part. Stop with 1–2 reps left.</p>
+    </div></section>`;
+}
+
+function render() {
+  if (!day) {
+    app.innerHTML = `<section class="slide home">
+      <div class="rotate">Turn your phone sideways for the TV.</div>
+      <h1>Which workout today?</h1>
+      <div class="days">${Object.entries(DATA.plan.days).map(([k, d]) =>
+        `<button class="day" data-day="${k}"><b>${esc(d.title)}</b><span>${d.exercises.map(e => esc(DATA.exercises[e.id].name)).join(" · ")}</span></button>`).join("")}</div>
+      <p>Week ${DATA.plan.week} · ${esc(DATA.plan.plan)}. Use Next and Back, or swipe.</p></section>`;
+    app.querySelectorAll(".day").forEach(b => b.onclick = () => start(b.dataset.day));
+    return;
+  }
+  const s = slides[i];
+  const nxt = slides[i + 1];
+  const upnext = nxt ? (nxt.kind === "ex" ? "Next: " + esc(nxt.ex.name) : "Next: finisher") : "Last slide";
+  app.innerHTML = slideHTML(s) + `<nav>
+    <button class="home-btn" data-go="home">⌂ Days</button>
+    <button data-go="-1" ${i === 0 ? "disabled" : ""}>◀ Back</button>
+    <div class="dots">${slides.map((_, n) => `<i class="${n === i ? "on" : ""}"></i>`).join("")}</div>
+    <span class="upnext">${upnext}</span>
+    <button class="next" data-go="1">${nxt ? "Next ▶" : "Done ✓"}</button></nav>`;
+  app.querySelectorAll("nav button").forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+function start(key) { day = key; slides = buildSlides(key); i = 0; keepAwake(); render(); }
+function go(g) {
+  if (g === "home" || (g === "1" && i === slides.length - 1)) { day = null; render(); return; }
+  i = Math.max(0, Math.min(slides.length - 1, i + Number(g))); render();
+}
+
+document.addEventListener("keydown", ev => {
+  if (!day) return;
+  if (ev.key === "ArrowRight" || ev.key === " ") go("1");
+  if (ev.key === "ArrowLeft") go("-1");
+  if (ev.key === "Escape") go("home");
+});
+let x0 = null;
+document.addEventListener("touchstart", ev => { x0 = ev.touches[0].clientX; }, {passive: true});
+document.addEventListener("touchend", ev => {
+  if (!day || x0 === null) return;
+  const dx = ev.changedTouches[0].clientX - x0; x0 = null;
+  if (Math.abs(dx) > 60) go(dx < 0 ? "1" : "-1");
+});
+
+// Keep the phone screen on while mirroring (Safari 16.4+); harmless if not supported.
+let lock = null;
+async function keepAwake() {
+  try { if ("wakeLock" in navigator && !lock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => lock = null); } } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && day) keepAwake(); });
+
+render();
+</script>
+</body></html>

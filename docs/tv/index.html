@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Workout TV">
+<meta name="theme-color" content="#0e0f10">
+<title>Workout TV</title>
+<style>
+@font-face { font-family: Barlow; font-weight: 500; src: url(fonts/Barlow-500.woff2) format("woff2"); }
+@font-face { font-family: Barlow; font-weight: 600; src: url(fonts/Barlow-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; src: url(fonts/BarlowCondensed-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url(fonts/BarlowCondensed-700.woff2) format("woff2"); }
+:root {
+  --bg: #0e0f10; --panel: #1a1c1e; --line: #2c2f33; --text: #f3f3f1; --dim: #a9adb2;
+  --accent: #ffd34d; --bad: #ff8a73; --good: #8fdc9c;
+  /* Sizes follow the screen, so a mirrored phone and a TV look the same. */
+  --u: min(1vw, 1.78vh);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+body { font-family: Barlow, system-ui, sans-serif; font-weight: 500; font-size: calc(var(--u) * 2.3); line-height: 1.3;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+h1, h2, .num, button { font-family: "Barlow Condensed", Barlow, sans-serif; }
+button { font-weight: 700; color: inherit; background: none; border: 0; cursor: pointer; }
+
+#app { position: fixed; inset: 0; display: flex; flex-direction: column;
+  padding: calc(var(--u) * 2) calc(var(--u) * 3) calc(var(--u) * 1.2);
+  padding-left: max(calc(var(--u) * 3), env(safe-area-inset-left)); padding-right: max(calc(var(--u) * 3), env(safe-area-inset-right)); }
+.slide { flex: 1; min-height: 0; display: flex; }
+
+/* Home: pick a day */
+.home { flex-direction: column; justify-content: center; gap: calc(var(--u) * 3); }
+.home h1 { font-size: calc(var(--u) * 6.4); line-height: 1; }
+.home p { color: var(--dim); font-size: calc(var(--u) * 2.4); }
+.days { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--u) * 2.4); }
+.day { text-align: left; background: var(--panel); border: 2px solid var(--line); border-radius: calc(var(--u) * 1.6);
+  padding: calc(var(--u) * 2.4) calc(var(--u) * 2.8); font-family: Barlow, sans-serif; font-weight: 500; }
+.day:focus-visible, .day:active { border-color: var(--accent); outline: none; }
+.day b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 4.4); line-height: 1.05; }
+.day span { display: block; color: var(--dim); font-size: calc(var(--u) * 2); margin-top: calc(var(--u) * .8); }
+
+/* Warm-up and finisher slides */
+.list { flex-direction: column; justify-content: center; gap: calc(var(--u) * 2.2); max-width: calc(var(--u) * 90); }
+.kicker { color: var(--accent); font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; font-size: calc(var(--u) * 2.2); }
+.list h1 { font-size: calc(var(--u) * 6); line-height: 1; }
+.list ol { list-style: none; display: grid; gap: calc(var(--u) * 1.1); font-size: calc(var(--u) * 3.2); }
+.list li::before { content: "•"; color: var(--accent); margin-right: calc(var(--u) * 1.4); }
+.list .sub { color: var(--dim); font-size: calc(var(--u) * 2.6); }
+
+/* Exercise slides: video left, teaching right */
+.ex { display: grid; grid-template-columns: 54fr 46fr; gap: calc(var(--u) * 3); align-items: start; width: 100%; }
+.media { display: flex; flex-direction: column; gap: calc(var(--u) * 1); }
+.video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: calc(var(--u) * 1.2); overflow: hidden; }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video .none { position: absolute; inset: 0; display: grid; place-items: center; color: var(--dim); text-align: center; padding: 8%; }
+.credit { color: var(--dim); font-size: calc(var(--u) * 1.7); }
+.dose { display: flex; gap: calc(var(--u) * 1.2); flex-wrap: wrap; }
+.chip { background: var(--panel); border: 1px solid var(--line); border-radius: calc(var(--u) * 1); padding: calc(var(--u) * .7) calc(var(--u) * 1.4); }
+.chip .num { color: var(--accent); font-weight: 700; font-size: calc(var(--u) * 3.2); line-height: 1; }
+.chip small { display: block; color: var(--dim); font-size: calc(var(--u) * 1.6); }
+.pair { color: var(--dim); font-size: calc(var(--u) * 1.8); }
+.pair b { color: var(--text); font-weight: 600; }
+
+.teach { display: flex; flex-direction: column; gap: calc(var(--u) * 1.3); }
+.teach h1 { font-size: calc(var(--u) * 4.6); line-height: 1; }
+.setup { color: var(--dim); font-size: calc(var(--u) * 1.9); }
+.setup b { color: var(--text); font-weight: 600; }
+.steps { list-style: none; counter-reset: s; display: grid; gap: calc(var(--u) * 1); }
+.steps li { counter-increment: s; display: grid; grid-template-columns: calc(var(--u) * 4) 1fr; align-items: baseline; font-size: calc(var(--u) * 2.4); line-height: 1.2; }
+.steps li::before { content: counter(s); font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--bg);
+  background: var(--accent); width: calc(var(--u) * 3); height: calc(var(--u) * 3); border-radius: 50%;
+  display: grid; place-items: center; font-size: calc(var(--u) * 2.3); align-self: start; }
+.mistake { border-left: calc(var(--u) * .5) solid var(--bad); padding-left: calc(var(--u) * 1.4); font-size: calc(var(--u) * 2.1); }
+.mistake small { display: block; color: var(--bad); font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; font-size: calc(var(--u) * 1.8); }
+.breath { color: var(--good); font-size: calc(var(--u) * 1.7); }
+
+/* Bottom bar */
+nav { display: flex; align-items: center; gap: calc(var(--u) * 1.6); padding-top: calc(var(--u) * 1.4); }
+nav button { font-size: calc(var(--u) * 2.4); padding: calc(var(--u) * .6) calc(var(--u) * 2); border-radius: calc(var(--u) * 1);
+  background: var(--panel); border: 1px solid var(--line); min-height: 44px; }
+nav .next { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+nav .home-btn { font-size: calc(var(--u) * 2.2); color: var(--dim); }
+.dots { flex: 1; display: flex; justify-content: center; gap: calc(var(--u) * .9); }
+.dots i { width: calc(var(--u) * 1.2); height: calc(var(--u) * 1.2); border-radius: 50%; background: var(--line); }
+.dots i.on { background: var(--accent); }
+.upnext { color: var(--dim); font-size: calc(var(--u) * 1.9); text-align: right; }
+nav button:disabled { opacity: .3; }
+
+/* Phone held upright: stack, and ask for landscape */
+@media (orientation: portrait) {
+  :root { --u: 1.9vw; }
+  body { overflow: auto; } #app { position: static; min-height: 100%; }
+  .ex { grid-template-columns: 1fr; }
+  .days { grid-template-columns: 1fr; }
+  .rotate { display: block !important; }
+}
+.rotate { display: none; color: var(--accent); font-size: calc(var(--u) * 2.6); margin-bottom: calc(var(--u) * 2); }
+</style></head><body>
+<div id="app"></div>
+<noscript>Turn on JavaScript to use the slideshow.</noscript>
+<script>
+const DATA = {"plan": {"week": 2, "plan": "Foundations", "days": {"A": {"title": "Day A: Full Body", "minutes": 55, "warmup": ["Row, easy, 3 min", "Joint circles, 1 min", "10 bodyweight squats", "5 scap pull-ups", "10 incline push-ups"], "exercises": [{"id": "goblet-squat", "pair": "A", "sets": 3, "reps": [10, 15], "rest": 60}, {"id": "pullup-negative", "pair": "A", "sets": 3, "reps": [3, 5], "rest": 75, "extra": "lower for 3–5 s"}, {"id": "db-bench", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "db-rdl", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "kb-swing", "sets": 5, "reps": [10, 15], "rest": 45}], "finisher": {"text": "Row 6 × (30 s strong / 30 s easy)", "detail": "RPE 7, HR under 160"}}, "B": {"title": "Day B: Full Body", "minutes": 55, "warmup": ["Row, easy, 3 min", "Joint circles, 1 min", "10 hip hinges", "Dead hang, 20 s", "5 split squats per leg"], "exercises": [{"id": "kb-deadlift", "pair": "A", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "db-row", "pair": "A", "sets": 3, "reps": [8, 12], "rest": 60, "extra": "each side"}, {"id": "incline-db-press", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "split-squat", "pair": "B", "sets": 3, "reps": [6, 10], "rest": 60, "extra": "each leg"}, {"id": "farmer-carry", "sets": 4, "reps": [40, 60], "rest": 60}], "finisher": {"text": "Air bike or row, steady 10 min", "detail": "short phrases only, RPE 6"}}}}, "exercises": {"goblet-squat": {"name": "Goblet squat", "setup": "Bell held by the horns · feet just wider than hips", "cues": ["Bell at your chest, elbows down.", "Sit between your heels, chest tall.", "Knees track over your middle toes."], "x": "Heels lifting? Widen your stance slightly.", "video": {"q": "goblet squat Squat University", "src": "Squat University", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "9W5KAqHfDe8", "src": "Fit Father Project"}}}, "pullup-negative": {"name": "Pull-up negative", "setup": "Box or bench under the bar · overhand, hands just outside shoulders", "cues": ["Step up so your chin starts over the bar.", "Brace, then lower as slowly as you can.", "Step back up for each rep."], "x": "Dropping fast? End the set.", "video": {"q": "pull up negatives form E3 Rehab", "src": "E3 Rehab", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "gbPURTSxQLY", "src": "Bodybuilding.com"}}}, "db-bench": {"name": "Dumbbell bench press", "setup": "Blackwing flat · bells on knees, kick back to start", "cues": ["Feet flat, shoulder blades pinched.", "Lower to chest level, elbows about 45°.", "Press up and slightly in."], "x": "Shoulders shrugging? Reset the blades.", "video": {"q": "dumbbell bench press technique Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "WLTU1j7Ur8M", "src": "BarBend"}}}, "db-rdl": {"name": "Dumbbell Romanian deadlift", "setup": "Feet hip-width · bells in front of thighs, overhand grip", "cues": ["Soft knees, push your hips back.", "Bells slide down the front of your legs.", "Stop at the hamstring stretch, stand tall."], "x": "Back rounding? Stop higher.", "video": {"q": "dumbbell romanian deadlift form Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "KN5vN3JskqI", "src": "Steev"}}}, "kb-swing": {"name": "Kettlebell swing", "setup": "Feet shoulder-width · shoes on", "cues": ["Bell a foot in front; hinge and grab it.", "Hike it back high between your thighs.", "Snap hips forward, bell floats to chest height.", "Arms are ropes; the hips do the work."], "x": "Lifting with your arms? Hinge more.", "video": {"q": "kettlebell swing tutorial StrongFirst", "src": "StrongFirst", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "R4nj_XaMn6Q", "src": "ShapeFit"}}}, "kb-deadlift": {"name": "Kettlebell deadlift", "setup": "Feet hip-width, bell under your laces", "cues": ["Bell between your mid-feet.", "Hips back, flat back, grip hard.", "Push the floor away, stand tall."], "x": "Squatting it up? Hips back more.", "video": {"q": "kettlebell deadlift form tutorial", "src": "", "len": "", "status": "pending", "tv": {"youtube_id": "9eVB3V3YFcg", "src": "Brittany van Schravendijk"}}}, "db-row": {"name": "One-arm dumbbell row", "setup": "Blackwing flat · same-side knee and hand on the pad", "cues": ["Knee and hand on the bench, back flat.", "Pull your elbow toward your hip.", "Pause one second at the top."], "x": "Twisting your torso? Go lighter.", "video": {"q": "one arm dumbbell row form E3 Rehab", "src": "E3 Rehab", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "fURsHPHgssI", "src": "The Healthy Habit"}}}, "incline-db-press": {"name": "Incline dumbbell press", "setup": "Blackwing at about 30° · bells on knees to start", "cues": ["Bench about 30° (2nd or 3rd notch).", "Lower to upper chest, elbows under wrists.", "Press up; don't clank the bells."], "x": "Back arching? Lower the incline.", "video": {"q": "incline dumbbell press form Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "8bfJ3sfUTos", "src": "Bodybuilding.com"}}}, "split-squat": {"name": "Split squat", "setup": "Hold the bench for balance at first", "cues": ["Long stance; hold the bench for balance.", "Drop the back knee straight down.", "Front heel stays down; drive through it."], "x": "Back toe sore? Swap to a goblet squat.", "video": {"q": "split squat form Squat University", "src": "Squat University", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "5VG4UnfA7Bk", "src": "Steev"}}}, "farmer-carry": {"name": "Farmer carry", "setup": "Clear a straight path, shoes on", "cues": ["Pick up like a deadlift, flat back.", "Tall posture, shoulders down and back.", "Short, steady steps; breathe."], "x": "Leaning or shuffling? Go lighter.", "row2": "steps", "video": {"q": "farmers carry how to Squat University", "src": "Squat University", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "z7E_YU9P1jU", "src": "Dr. Carl Baird"}}}}};
+const app = document.getElementById("app");
+let day = null, i = 0, slides = [];
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const range = r => Array.isArray(r) ? (r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : r;
+const unit = ex => ex.row2 === "steps" ? "steps" : "reps";
+
+function buildSlides(key) {
+  const d = DATA.plan.days[key];
+  const list = [{kind: "warmup", d}];
+  d.exercises.forEach((e, n) => {
+    const partner = e.pair && d.exercises.find(o => o !== e && o.pair === e.pair);
+    list.push({kind: "ex", e, ex: DATA.exercises[e.id], partner: partner && DATA.exercises[partner.id], first: partner && d.exercises.indexOf(partner) > n});
+  });
+  if (d.finisher && d.finisher.text) list.push({kind: "finisher", d});
+  return list;
+}
+
+function video(v) {
+  const id = v && v.tv && v.tv.youtube_id;
+  if (!id) return `<div class="none">Video still being chosen.</div>`;
+  // Muted autoplay is the only autoplay iOS allows; tap the player for sound.
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${id}`;
+  return `<iframe src="${src}" title="Demo video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+}
+
+function slideHTML(s) {
+  if (s.kind === "warmup") return `<section class="slide list">
+    <div class="rotate">Turn your phone sideways for the TV.</div>
+    <div class="kicker">${esc(s.d.title)} · Warm-up first</div>
+    <h1>Warm up, about 8 minutes</h1>
+    <ol>${s.d.warmup.map(w => `<li>${esc(w)}</li>`).join("")}</ol>
+    <p class="sub">Then tap Next for the first exercise.</p></section>`;
+  if (s.kind === "finisher") return `<section class="slide list">
+    <div class="kicker">Finisher</div>
+    <h1>${esc(s.d.finisher.text)}</h1>
+    <p class="sub">${esc(s.d.finisher.detail)}</p>
+    <p class="sub">Then write your numbers on the sheet. Nice work.</p></section>`;
+  const {e, ex, partner} = s;
+  const pair = partner ? `<p class="pair">Superset ${esc(e.pair)}: one set of this, then one set of <b>${esc(partner.name)}</b>, then rest. Repeat.</p>` : "";
+  const src = ex.video && ex.video.tv ? `Video: ${esc(ex.video.tv.src)} · tap it for sound` : "";
+  return `<section class="slide ex">
+    <div class="media">
+      <div class="video">${video(ex.video)}</div>
+      <div class="credit">${src}</div>
+      <div class="dose">
+        <div class="chip"><span class="num">${e.sets}</span><small>sets</small></div>
+        <div class="chip"><span class="num">${range(e.reps)}</span><small>${unit(ex)}${e.extra ? " · " + esc(e.extra) : ""}</small></div>
+        <div class="chip"><span class="num">${e.rest} s</span><small>rest</small></div>
+      </div>
+      ${pair}
+    </div>
+    <div class="teach">
+      <h1>${esc(ex.name)}</h1>
+      <p class="setup"><b>Setup:</b> ${esc(ex.setup).replace(/ · /g, ", ")}</p>
+      <ol class="steps">${ex.cues.map(c => `<li>${esc(c)}</li>`).join("")}</ol>
+      <p class="mistake"><small>Watch for</small>${esc(ex.x)}</p>
+      <p class="breath">Breathe out on the hard part. Stop with 1–2 reps left.</p>
+    </div></section>`;
+}
+
+function render() {
+  if (!day) {
+    app.innerHTML = `<section class="slide home">
+      <div class="rotate">Turn your phone sideways for the TV.</div>
+      <h1>Which workout today?</h1>
+      <div class="days">${Object.entries(DATA.plan.days).map(([k, d]) =>
+        `<button class="day" data-day="${k}"><b>${esc(d.title)}</b><span>${d.exercises.map(e => esc(DATA.exercises[e.id].name)).join(" · ")}</span></button>`).join("")}</div>
+      <p>Week ${DATA.plan.week} · ${esc(DATA.plan.plan)}. Use Next and Back, or swipe.</p></section>`;
+    app.querySelectorAll(".day").forEach(b => b.onclick = () => start(b.dataset.day));
+    return;
+  }
+  const s = slides[i];
+  const nxt = slides[i + 1];
+  const upnext = nxt ? (nxt.kind === "ex" ? "Next: " + esc(nxt.ex.name) : "Next: finisher") : "Last slide";
+  app.innerHTML = slideHTML(s) + `<nav>
+    <button class="home-btn" data-go="home">⌂ Days</button>
+    <button data-go="-1" ${i === 0 ? "disabled" : ""}>◀ Back</button>
+    <div class="dots">${slides.map((_, n) => `<i class="${n === i ? "on" : ""}"></i>`).join("")}</div>
+    <span class="upnext">${upnext}</span>
+    <button class="next" data-go="1">${nxt ? "Next ▶" : "Done ✓"}</button></nav>`;
+  app.querySelectorAll("nav button").forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+function start(key) { day = key; slides = buildSlides(key); i = 0; keepAwake(); render(); }
+function go(g) {
+  if (g === "home" || (g === "1" && i === slides.length - 1)) { day = null; render(); return; }
+  i = Math.max(0, Math.min(slides.length - 1, i + Number(g))); render();
+}
+
+document.addEventListener("keydown", ev => {
+  if (!day) return;
+  if (ev.key === "ArrowRight" || ev.key === " ") go("1");
+  if (ev.key === "ArrowLeft") go("-1");
+  if (ev.key === "Escape") go("home");
+});
+let x0 = null;
+document.addEventListener("touchstart", ev => { x0 = ev.touches[0].clientX; }, {passive: true});
+document.addEventListener("touchend", ev => {
+  if (!day || x0 === null) return;
+  const dx = ev.changedTouches[0].clientX - x0; x0 = null;
+  if (Math.abs(dx) > 60) go(dx < 0 ? "1" : "-1");
+});
+
+// Keep the phone screen on while mirroring (Safari 16.4+); harmless if not supported.
+let lock = null;
+async function keepAwake() {
+  try { if ("wakeLock" in navigator && !lock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => lock = null); } } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && day) keepAwake(); });
+
+render();
+</script>
+</body></html>

@@ -13,3 +13,10 @@ Until an exercise is vetted, its link opens a YouTube search on the named channe
 
 ## GitHub Pages
 Settings → Pages → Deploy from a branch → `main`, folder `/docs`.
+
+## Workout TV slideshow
+`https://57ny2hr92b-create.github.io/workout-sheets/tv/` shows the week's strength days one exercise at a time, with a demo video, sets, reps, rest, setup, cues and the common mistake, sized for a TV. Open it in Safari on an iPhone, turn the phone sideways, and use Screen Mirroring to send it to the Apple TV.
+
+- `plan.json` holds the strength days. Refresh it when the plan changes: `python3 scripts/export_plan.py /path/to/weekNN.json`, then `python3 scripts/build_site.py`. It keeps only titles, warm-ups, exercise order, sets, reps, rest and finisher; no loads or logs.
+- Each exercise's demo is `video.tv.youtube_id` in `library.json`. Swap an ID and rebuild to change a video.
+- The page design is `scripts/tv.html`; the build bakes the data into `docs/tv/index.html`.
