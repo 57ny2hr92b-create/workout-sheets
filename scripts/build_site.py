@@ -61,9 +61,9 @@ def build():
     build_tv(lib)
 
 
-def build_tv(lib):
+def build_tv(lib, plan_path=ROOT / "plan.json", out=DOCS / "tv"):
     # The slideshow is one page with the plan and exercise text baked in; fonts sit beside it in docs/tv/fonts.
-    plan = json.loads((ROOT / "plan.json").read_text())
+    plan = json.loads(pathlib.Path(plan_path).read_text())
     used = {e["id"] for d in plan["days"].values() for e in d["exercises"]}
     missing = used - lib["exercises"].keys()
     if missing:
@@ -71,9 +71,9 @@ def build_tv(lib):
     keep = ("name", "setup", "cues", "x", "row2", "video")
     data = {"plan": plan, "exercises": {k: {f: v[f] for f in keep if f in v} for k, v in lib["exercises"].items() if k in used}}
     blob = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    (DOCS / "tv").mkdir(exist_ok=True)
-    (DOCS / "tv" / "index.html").write_text((ROOT / "scripts" / "tv.html").read_text().replace("__DATA__", blob))
-
+    out = pathlib.Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "index.html").write_text((ROOT / "scripts" / "tv.html").read_text().replace("__DATA__", blob))
 
 if __name__ == "__main__":
     build()

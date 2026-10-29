@@ -5,6 +5,7 @@
     "A": {
       "title": "Day A: Full Body",
       "minutes": 55,
+      "warmup_min": 8,
       "warmup": [
         "Row, easy, 3 min",
         "Joint circles, 1 min",
@@ -72,6 +73,7 @@
     "B": {
       "title": "Day B: Full Body",
       "minutes": 55,
+      "warmup_min": 8,
       "warmup": [
         "Row, easy, 3 min",
         "Joint circles, 1 min",

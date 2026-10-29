@@ -22,6 +22,7 @@ def export(week_path):
         days[key] = {
             "title": t["title"],
             "minutes": t.get("minutes"),
+            "warmup_min": t.get("warmup_min"),
             "warmup": t.get("warmup", []),
             "exercises": [
                 {k: e[k] for k in ("id", "pair", "sets", "reps", "rest", "extra") if k in e}

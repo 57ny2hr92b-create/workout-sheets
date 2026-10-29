@@ -1,0 +1,116 @@
+{
+  "week": 12,
+  "plan": "Stress test with a much longer phase name than normal",
+  "days": {
+    "A": {
+      "title": "Day A: Full Body Strength and Conditioning Extended",
+      "minutes": 75,
+      "warmup_min": 12,
+      "warmup": [
+        "Row, easy, 3 min",
+        "Joint circles, 1 min",
+        "10 bodyweight squats",
+        "5 scap pull-ups",
+        "10 incline push-ups",
+        "World's greatest stretch, 5 per side with a pause",
+        "Dead hang, 20 s",
+        "10 glute bridges",
+        "Band pull-aparts, 15"
+      ],
+      "exercises": [
+        {
+          "id": "long-everything",
+          "pair": "A",
+          "sets": 5,
+          "reps": [
+            12,
+            20
+          ],
+          "rest": 150,
+          "extra": "each side, 3 s lowering"
+        },
+        {
+          "id": "goblet-squat",
+          "pair": "A",
+          "sets": 3,
+          "reps": [
+            10,
+            15
+          ],
+          "rest": 60
+        },
+        {
+          "id": "bare-minimum",
+          "pair": "A",
+          "sets": 3,
+          "reps": 45
+        },
+        {
+          "id": "supercalifragilistic",
+          "sets": 4,
+          "reps": [
+            8,
+            8
+          ],
+          "rest": 90
+        },
+        {
+          "id": "kb-swing",
+          "sets": 5,
+          "reps": [
+            10,
+            15
+          ],
+          "rest": 45
+        },
+        {
+          "id": "farmer-carry",
+          "sets": 4,
+          "reps": [
+            40,
+            60
+          ],
+          "rest": 60
+        },
+        {
+          "id": "goblet-squat",
+          "sets": 2,
+          "reps": [
+            15,
+            20
+          ],
+          "rest": 120
+        }
+      ],
+      "finisher": {
+        "text": "Row 10 × (30 s strong / 30 s easy), then walk it off for three minutes before stretching your hips and hamstrings",
+        "detail": "RPE 7, HR under 160; stop early if your toe hurts over 3 out of 10 or you feel dizzy at any point."
+      }
+    },
+    "B": {
+      "title": "Day B",
+      "exercises": [
+        {
+          "id": "bare-minimum"
+        }
+      ]
+    },
+    "C": {
+      "title": "Day C: Short",
+      "warmup": [
+        "Walk 5 min"
+      ],
+      "exercises": [
+        {
+          "id": "kb-swing",
+          "sets": 3,
+          "reps": [
+            10,
+            15
+          ],
+          "rest": 45
+        }
+      ]
+    }
+  }
+}
