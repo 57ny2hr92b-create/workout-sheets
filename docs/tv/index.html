@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Workout TV">
+<meta name="theme-color" content="#0b0c0e">
+<title>Workout TV</title>
+<style>
+@font-face { font-family: Barlow; font-weight: 500; src: url(fonts/Barlow-500.woff2) format("woff2"); }
+@font-face { font-family: Barlow; font-weight: 600; src: url(fonts/Barlow-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; src: url(fonts/BarlowCondensed-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url(fonts/BarlowCondensed-700.woff2) format("woff2"); }
+:root {
+  --bg: #0b0c0e; --panel: #15171a; --panel-2: #1c1f23; --line: #272b30; --text: #f4f4f1; --muted: #9ba1a8;
+  --accent: #f5b83d; --accent-ink: #1a1305; --warn: #ef7b63; --ok: #7fcf95;
+  /* One unit that follows the screen, so a mirrored phone and a TV look the same. */
+  --u: min(1vw, 1.78vh);
+  --pad: calc(var(--u) * 3);
+  --radius: calc(var(--u) * .25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+body { font-family: Barlow, system-ui, sans-serif; font-weight: 500; line-height: 1.3; font-size: calc(var(--u) * 2);
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+.cond { font-family: "Barlow Condensed", Barlow, sans-serif; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.label { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--muted); font-size: calc(var(--u) * 1.5); }
+
+#app { position: fixed; inset: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 1.8);
+  padding: calc(var(--u) * 2.2) var(--pad) calc(var(--u) * 1.8);
+  padding-left: max(var(--pad), env(safe-area-inset-left)); padding-right: max(var(--pad), env(safe-area-inset-right)); }
+main { flex: 1; min-height: 0; display: flex; }
+
+/* Header: where you are in the workout */
+header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: calc(var(--u) * .8) calc(var(--u) * 2); }
+header .where { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+header .where b { color: var(--text); }
+header .count { font-family: "Barlow Condensed", sans-serif; font-weight: 600; color: var(--muted); font-size: calc(var(--u) * 2); }
+header .count b { color: var(--text); font-weight: 700; }
+.bar { grid-column: 1 / -1; height: calc(var(--u) * .45); border-radius: 0; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 0; transition: width .3s ease; }
+
+/* Footer controls */
+nav { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: calc(var(--u) * 1.2); }
+.btn { display: inline-flex; align-items: center; gap: calc(var(--u) * .8); min-height: 44px; white-space: nowrap;
+  font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 2.3);
+  padding: calc(var(--u) * .8) calc(var(--u) * 2); border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); }
+.btn.ghost { background: none; color: var(--muted); }
+.btn:disabled { opacity: .3; cursor: default; }
+.btn.primary { justify-self: end; max-width: min(100%, calc(var(--u) * 52)); background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.btn.primary small { font-family: Barlow, sans-serif; font-weight: 600; font-size: .62em; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+svg.i { width: 1em; height: 1em; flex: none; }
+
+/* Text that shrinks to fit its box (see fit() below) */
+.fit { overflow: hidden; min-height: 0; }
+
+/* Home: pick a day */
+.home { width: 100%; }
+.home.fit { display: flex; flex-direction: column; justify-content: center; gap: 1.2em; font-size: calc(var(--u) * 2); }
+.home h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 3em; line-height: 1; margin-top: -.4em; }
+.home .label { font-size: .75em; }
+.days { display: grid; grid-template-columns: repeat(auto-fit, minmax(14em, 1fr)); gap: 1em; align-items: start; }
+.day { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.1em 1.2em; display: flex; flex-direction: column; gap: .5em; min-width: 0; }
+.day:active, .day:focus-visible { border-color: var(--accent); outline: none; }
+.day b { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.9em; line-height: 1.05;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.day ol { list-style: none; display: grid; gap: .2em; color: var(--muted); font-size: .9em; }
+.day ol li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day .meta { color: var(--accent); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: .9em; }
+.home .hint { color: var(--muted); font-size: .85em; }
+
+/* Warm-up and finisher */
+.list { flex-direction: column; justify-content: center; width: 100%; }
+.list .fit { display: flex; flex-direction: column; justify-content: center; gap: .9em; height: 100%; font-size: calc(var(--u) * 2.6); }
+.list h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.3em; line-height: 1.02; max-width: 30em; }
+.list ol { list-style: none; display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--rows), auto); gap: .5em 2.4em; justify-content: start; }
+.list li { display: flex; gap: .6em; align-items: baseline; max-width: 22em; }
+.list li::before { content: ""; flex: none; width: .45em; height: .45em; border-radius: 50%; background: var(--accent); transform: translateY(-.12em); }
+.list .sub { color: var(--muted); font-size: .85em; max-width: 36em; }
+
+/* Exercise slide: video and dose on the left, coaching on the right */
+.ex { display: grid; grid-template-columns: minmax(0, 53fr) minmax(0, 47fr); gap: calc(var(--u) * 3); width: 100%; }
+.media { display: flex; flex-direction: column; gap: calc(var(--u) * 1.4); min-height: 0; }
+.video { position: relative; width: 100%; aspect-ratio: 16 / 9; flex: 0 1 auto; min-height: 0; background: #000;
+  border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video .none { position: absolute; inset: 0; display: grid; place-content: center; gap: calc(var(--u) * .6); text-align: center; padding: 8%;
+  background: radial-gradient(circle at 50% 40%, var(--panel-2), #000 75%); color: var(--muted); }
+.video .none b { color: var(--text); font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 2.6); }
+.credit { flex: none; color: var(--muted); font-size: calc(var(--u) * 1.5); margin-top: calc(var(--u) * -.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); flex: none; }
+.dose div { padding: calc(var(--u) * 1) calc(var(--u) * 1.6); min-width: 0; }
+.dose div + div { border-left: 1px solid var(--line); }
+.dose .num { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent); font-size: calc(var(--u) * 3.6); line-height: 1.05;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dose .num small { font-size: .55em; font-weight: 600; margin-left: .15em; }
+.dose .label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note { display: flex; gap: calc(var(--u) * 1); align-items: flex-start; color: var(--muted); font-size: calc(var(--u) * 1.75); flex: none; }
+.note b { color: var(--text); font-weight: 600; }
+.tag { flex: none; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
+  border-radius: calc(var(--u) * .15); padding: 0 calc(var(--u) * .6); font-size: calc(var(--u) * 1.6); line-height: 1.5; }
+
+.teach.fit { display: flex; flex-direction: column; gap: .75em; font-size: calc(var(--u) * 2.4); }
+.teach h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.1em; line-height: 1; text-wrap: balance; overflow-wrap: anywhere; }
+.teach .label { font-size: .62em; margin-bottom: .3em; display: block; }
+.teach .setup { color: var(--muted); font-size: .86em; }
+.teach .setup ul { list-style: none; display: grid; gap: .15em; color: var(--text); }
+.teach .setup li { display: flex; gap: .5em; }
+.teach .setup li::before { content: "–"; color: var(--muted); }
+.steps { list-style: none; counter-reset: s; display: grid; gap: .5em; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 1.6em 1fr; gap: .55em; line-height: 1.25; overflow-wrap: anywhere; }
+.steps li::before { content: counter(s); font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
+  width: 1.4em; height: 1.4em; border-radius: 50%; display: grid; place-items: center; font-size: .82em; margin-top: .08em; }
+.avoid { background: color-mix(in srgb, var(--warn) 9%, var(--panel)); border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
+  border-radius: var(--radius); padding: .55em .8em; font-size: .9em; }
+.avoid .label { color: var(--warn); }
+.remind { color: var(--ok); font-size: .74em; }
+
+/* ---------- Looks: ?style= takes print (colours) and/or cinema or scoreboard (layout); the default is print + cinema ---------- */
+
+/* Print: light paper and black ink, like the printed sheets */
+body[data-style~="print"] { --bg: #f6f4ef; --panel: #ffffff; --panel-2: #ece9e2; --line: #d8d4cb; --text: #141414; --muted: #615d56;
+  --accent: #141414; --accent-ink: #ffffff; --warn: #b4321f; --ok: #2f6b40; }
+body[data-style~="print"] .video { border-color: #141414; }
+body[data-style~="print"] .video .none { background: radial-gradient(circle at 50% 40%, #3a3a3a, #111 75%); }
+body[data-style~="print"] .video .none b { color: #fff; }
+body[data-style~="print"] .dose .num { color: var(--text); }
+body[data-style~="print"] .avoid { background: #fff; border: 2px solid var(--warn); }
+body[data-style~="print"] .teach h1, body[data-style~="print"] .home h1 { text-transform: uppercase; letter-spacing: .01em; }
+body[data-style~="print"] .teach h1 { border-bottom: 3px solid var(--text); padding-bottom: .12em; }
+
+/* Cinema: a big video takes most of the screen, coaching sits in a slim sidebar */
+body[data-style~="cinema"]:not([data-style~="print"]) { --bg: #000; --panel: #121417; --line: #24282d; --accent: #4fe3c1; --accent-ink: #04201a; }
+body[data-style~="cinema"] .ex { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  grid-template-areas: "video dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 2.4); row-gap: calc(var(--u) * 1.2); }
+body[data-style~="cinema"] .media { display: contents; }
+body[data-style~="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: var(--radius); }
+body[data-style~="cinema"] .credit { grid-area: credit; margin: 0; }
+body[data-style~="cinema"] .dose { grid-area: dose; }
+body[data-style~="cinema"] .dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.1); }
+body[data-style~="cinema"] .dose .num { font-size: calc(var(--u) * 3); }
+body[data-style~="cinema"] .note { grid-area: note1; }
+body[data-style~="cinema"] .note + .note { grid-area: note2; }
+body[data-style~="cinema"] .teach.fit { grid-area: teach; }
+body[data-style~="cinema"] .teach h1 { font-size: 1.8em; }
+
+/* Scoreboard: huge sets, reps and rest across the top; video and steps below */
+body[data-style~="scoreboard"] { --bg: #0d1220; --panel: #151c2e; --panel-2: #1b2338; --line: #26304a; --muted: #93a0bd; --accent: #ff5d3a; --accent-ink: #fff; }
+body[data-style~="scoreboard"] .ex { grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto; grid-template-areas: "dose dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 3); row-gap: calc(var(--u) * 1.2); }
+body[data-style~="scoreboard"] .media { display: contents; }
+body[data-style~="scoreboard"] .dose { grid-area: dose; background: none; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding-bottom: calc(var(--u) * .6); }
+body[data-style~="scoreboard"] .dose div { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 1.6); }
+body[data-style~="scoreboard"] .dose div:first-child { padding-left: 0; }
+body[data-style~="scoreboard"] .dose .num { font-size: calc(var(--u) * 6.4); color: var(--text); }
+body[data-style~="scoreboard"] .dose .label { font-size: calc(var(--u) * 2); color: var(--accent); }
+body[data-style~="scoreboard"] .video { grid-area: video; aspect-ratio: auto; height: 100%; }
+body[data-style~="scoreboard"] .credit { grid-area: credit; margin: 0; }
+body[data-style~="scoreboard"] .note { grid-area: note1; }
+body[data-style~="scoreboard"] .note + .note { grid-area: note2; }
+body[data-style~="scoreboard"] .teach.fit { grid-area: teach; }
+body[data-style~="scoreboard"] .steps li::before { border-radius: calc(var(--u) * .4); }
+
+/* Phone held upright: stack and scroll, and ask for landscape */
+.rotate { display: none; }
+@media (orientation: portrait) {
+  :root { --u: 2vw; }
+  html, body { overflow: auto; } #app { position: static; min-height: 100%; }
+  main { display: block; } .ex { grid-template-columns: 1fr; }
+  .fit { overflow: visible; }
+  .rotate { display: block; color: var(--accent); margin-bottom: calc(var(--u) * 2); font-size: calc(var(--u) * 2.6); }
+  body[data-style] .ex { display: flex; flex-direction: column; gap: calc(var(--u) * 2); }
+  body[data-style] .media { display: flex; flex-direction: column; gap: calc(var(--u) * 1.4); }
+  body[data-style] .video { aspect-ratio: 16 / 9; height: auto; }
+}
+</style></head><body>
+<div id="app"></div>
+<noscript>Turn on JavaScript to use the slideshow.</noscript>
+<script>
+const DATA = {"plan": {"week": 2, "plan": "Foundations", "days": {"A": {"title": "Day A: Full Body", "minutes": 55, "warmup_min": 8, "warmup": ["Row, easy, 3 min", "Joint circles, 1 min", "10 bodyweight squats", "5 scap pull-ups", "10 incline push-ups"], "exercises": [{"id": "goblet-squat", "pair": "A", "sets": 3, "reps": [10, 15], "rest": 60}, {"id": "pullup-negative", "pair": "A", "sets": 3, "reps": [3, 5], "rest": 75, "extra": "lower for 3–5 s"}, {"id": "db-bench", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "db-rdl", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "kb-swing", "sets": 5, "reps": [10, 15], "rest": 45}], "finisher": {"text": "Row 6 × (30 s strong / 30 s easy)", "detail": "RPE 7, HR under 160"}}, "B": {"title": "Day B: Full Body", "minutes": 55, "warmup_min": 8, "warmup": ["Row, easy, 3 min", "Joint circles, 1 min", "10 hip hinges", "Dead hang, 20 s", "5 split squats per leg"], "exercises": [{"id": "kb-deadlift", "pair": "A", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "db-row", "pair": "A", "sets": 3, "reps": [8, 12], "rest": 60, "extra": "each side"}, {"id": "incline-db-press", "pair": "B", "sets": 3, "reps": [8, 12], "rest": 60}, {"id": "split-squat", "pair": "B", "sets": 3, "reps": [6, 10], "rest": 60, "extra": "each leg"}, {"id": "farmer-carry", "sets": 4, "reps": [40, 60], "rest": 60}], "finisher": {"text": "Air bike or row, steady 10 min", "detail": "short phrases only, RPE 6"}}}}, "exercises": {"goblet-squat": {"name": "Goblet squat", "setup": "Bell held by the horns · feet just wider than hips", "cues": ["Bell at your chest, elbows down.", "Sit between your heels, chest tall.", "Knees track over your middle toes."], "x": "Heels lifting? Widen your stance slightly.", "video": {"q": "goblet squat Squat University", "src": "Squat University", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "9W5KAqHfDe8", "src": "Fit Father Project"}}}, "pullup-negative": {"name": "Pull-up negative", "setup": "Box or bench under the bar · overhand, hands just outside shoulders", "cues": ["Step up so your chin starts over the bar.", "Brace, then lower as slowly as you can.", "Step back up for each rep."], "x": "Dropping fast? End the set.", "video": {"q": "pull up negatives form E3 Rehab", "src": "E3 Rehab", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "gbPURTSxQLY", "src": "Bodybuilding.com"}}}, "db-bench": {"name": "Dumbbell bench press", "setup": "Blackwing flat · bells on knees, kick back to start", "cues": ["Feet flat, shoulder blades pinched.", "Lower to chest level, elbows about 45°.", "Press up and slightly in."], "x": "Shoulders shrugging? Reset the blades.", "video": {"q": "dumbbell bench press technique Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "WLTU1j7Ur8M", "src": "BarBend"}}}, "db-rdl": {"name": "Dumbbell Romanian deadlift", "setup": "Feet hip-width · bells in front of thighs, overhand grip", "cues": ["Soft knees, push your hips back.", "Bells slide down the front of your legs.", "Stop at the hamstring stretch, stand tall."], "x": "Back rounding? Stop higher.", "video": {"q": "dumbbell romanian deadlift form Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "KN5vN3JskqI", "src": "Steev"}}}, "kb-swing": {"name": "Kettlebell swing", "setup": "Feet shoulder-width · shoes on", "cues": ["Bell a foot in front; hinge and grab it.", "Hike it back high between your thighs.", "Snap hips forward, bell floats to chest height.", "Arms are ropes; the hips do the work."], "x": "Lifting with your arms? Hinge more.", "video": {"q": "kettlebell swing tutorial StrongFirst", "src": "StrongFirst", "len": "~3 min", "status": "candidate", "tv": {"youtube_id": "R4nj_XaMn6Q", "src": "ShapeFit"}}}, "kb-deadlift": {"name": "Kettlebell deadlift", "setup": "Feet hip-width, bell under your laces", "cues": ["Bell between your mid-feet.", "Hips back, flat back, grip hard.", "Push the floor away, stand tall."], "x": "Squatting it up? Hips back more.", "video": {"q": "kettlebell deadlift form tutorial", "src": "", "len": "", "status": "pending", "tv": {"youtube_id": "9eVB3V3YFcg", "src": "Brittany van Schravendijk"}}}, "db-row": {"name": "One-arm dumbbell row", "setup": "Blackwing flat · same-side knee and hand on the pad", "cues": ["Knee and hand on the bench, back flat.", "Pull your elbow toward your hip.", "Pause one second at the top."], "x": "Twisting your torso? Go lighter.", "video": {"q": "one arm dumbbell row form E3 Rehab", "src": "E3 Rehab", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "fURsHPHgssI", "src": "The Healthy Habit"}}}, "incline-db-press": {"name": "Incline dumbbell press", "setup": "Blackwing at about 30° · bells on knees to start", "cues": ["Bench about 30° (2nd or 3rd notch).", "Lower to upper chest, elbows under wrists.", "Press up; don't clank the bells."], "x": "Back arching? Lower the incline.", "video": {"q": "incline dumbbell press form Jeff Nippard", "src": "Jeff Nippard", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "8bfJ3sfUTos", "src": "Bodybuilding.com"}}}, "split-squat": {"name": "Split squat", "setup": "Hold the bench for balance at first", "cues": ["Long stance; hold the bench for balance.", "Drop the back knee straight down.", "Front heel stays down; drive through it."], "x": "Back toe sore? Swap to a goblet squat.", "video": {"q": "split squat form Squat University", "src": "Squat University", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "5VG4UnfA7Bk", "src": "Steev"}}}, "farmer-carry": {"name": "Farmer carry", "setup": "Clear a straight path, shoes on", "cues": ["Pick up like a deadlift, flat back.", "Tall posture, shoulders down and back.", "Short, steady steps; breathe."], "x": "Leaning or shuffling? Go lighter.", "row2": "steps", "video": {"q": "farmers carry how to Squat University", "src": "Squat University", "len": "~2 min", "status": "candidate", "tv": {"youtube_id": "z7E_YU9P1jU", "src": "Dr. Carl Baird"}}}}};
+// Looks are a colour scheme plus a layout, e.g. ?style=print,cinema. ?style=gym is the original dark look.
+const STYLES = ["print", "cinema", "scoreboard"];
+const DEFAULT_STYLE = "print cinema";
+const asked = new URLSearchParams(location.search).get("style");
+document.body.dataset.style = asked === null ? DEFAULT_STYLE : asked.split(/[\s,]+/).filter(x => STYLES.includes(x)).join(" ");
+const app = document.getElementById("app");
+const ARROW_R = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const ARROW_L = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
+const GRID = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>';
+const CHECK = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+let day = null, i = 0, slides = [];
+
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const range = r => Array.isArray(r) ? (r.length < 2 || r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : (r ?? "");
+const unit = ex => ex.row2 === "steps" ? "steps" : "reps";
+const nameOf = id => (DATA.exercises[id] || {}).name || id;
+const rest = s => !s ? "" : s >= 120 && s % 60 === 0 ? `${s / 60}<small>min</small>` : `${s}<small>s</small>`;
+
+function buildSlides(key) {
+  const d = DATA.plan.days[key];
+  const list = [];
+  if (d.warmup && d.warmup.length) list.push({kind: "warmup", d});
+  d.exercises.forEach((e, n) => {
+    const partners = e.pair ? d.exercises.filter(o => o !== e && o.pair === e.pair) : [];
+    const slot = e.pair ? e.pair + (d.exercises.filter(o => o.pair === e.pair).indexOf(e) + 1) : null;
+    list.push({kind: "ex", e, n, ex: DATA.exercises[e.id] || {name: e.id}, partners, slot});
+  });
+  if (d.finisher && d.finisher.text) list.push({kind: "finisher", d});
+  return list;
+}
+
+function video(ex) {
+  const id = ex.video && ex.video.tv && ex.video.tv.youtube_id;
+  if (!id) return `<div class="none"><b>Video coming soon</b><span>Follow the steps on the right.</span></div>`;
+  // Muted autoplay is the only autoplay iOS allows; tap the player for sound.
+  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${encodeURIComponent(id)}`;
+  return `<iframe src="${src}" title="${esc(ex.name)} demo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+}
+
+function exerciseHTML(s) {
+  const {e, ex, partners, slot} = s;
+  const cues = ex.cues || [];
+  const parts = String(ex.setup || "").split(/\s*·\s*/).filter(Boolean).map(p => p[0].toUpperCase() + p.slice(1));
+  const setup = parts.length ? `<div class="setup"><span class="label">Setup</span><ul>${parts.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>` : "";
+  const avoid = ex.x ? `<div class="avoid"><span class="label">Watch for</span>${esc(ex.x)}</div>` : "";
+  const steps = cues.length ? `<div><span class="label">How to</span><ol class="steps">${cues.map(c => `<li><span>${esc(c)}</span></li>`).join("")}</ol></div>` : "";
+  const dose = [
+    e.sets ? `<div><span class="num">${e.sets}</span><span class="label">sets</span></div>` : "",
+    e.reps !== undefined ? `<div><span class="num">${esc(range(e.reps))}</span><span class="label">${unit(ex)}</span></div>` : "",
+    e.rest ? `<div><span class="num">${rest(e.rest)}</span><span class="label">rest</span></div>` : "",
+  ].join("");
+  const extra = e.extra ? `<p class="note"><span class="tag">Tip</span><span>${esc(e.extra[0].toUpperCase() + e.extra.slice(1))}</span></p>` : "";
+  const pair = partners.length
+    ? `<p class="note"><span class="tag">${esc(slot)}</span><span>Superset: one set of this, then <b>${partners.map(p => esc(nameOf(p.id))).join("</b>, then <b>")}</b>. Then rest.</span></p>` : "";
+  const credit = ex.video && ex.video.tv ? `<p class="credit">Demo: ${esc(ex.video.tv.src || "YouTube")}. Tap the video for sound.</p>` : "";
+  return `<section class="ex">
+    <div class="media">
+      <div class="video">${video(ex)}</div>
+      ${credit}
+      ${dose ? `<div class="dose">${dose}</div>` : ""}
+      ${extra}${pair}
+    </div>
+    <div class="teach fit" data-base="2.4">
+      <h1>${esc(ex.name)}</h1>
+      ${setup}${steps}${avoid}
+      <p class="remind">Breathe out on the hard part. Stop each set with 1–2 reps left.</p>
+    </div></section>`;
+}
+
+function slideHTML(s) {
+  if (s.kind === "ex") return exerciseHTML(s);
+  if (s.kind === "warmup") {
+    const items = s.d.warmup;
+    const rows = items.length > 6 ? Math.ceil(items.length / 2) : items.length;
+    return `<section class="list"><div class="fit" data-base="2.6">
+      <div class="rotate">Turn your phone sideways for the TV.</div>
+      <span class="label">Warm-up first</span>
+      <h1>Get warm: about ${s.d.warmup_min || 8} minutes</h1>
+      <ol style="--rows:${rows}">${items.map(w => `<li>${esc(w)}</li>`).join("")}</ol>
+      <p class="sub">Easy pace. You should feel loose, not tired.</p></div></section>`;
+  }
+  return `<section class="list"><div class="fit" data-base="2.6">
+    <span class="label">Finisher</span>
+    <h1>${esc(s.d.finisher.text)}</h1>
+    ${s.d.finisher.detail ? `<p class="sub">${esc(s.d.finisher.detail)}</p>` : ""}
+    <p class="sub">Then write your numbers on today's sheet. Nice work.</p></div></section>`;
+}
+
+function homeHTML() {
+  const days = Object.entries(DATA.plan.days);
+  return `<main><section class="home fit" data-base="2">
+    <div class="rotate">Turn your phone sideways for the TV.</div>
+    <span class="label">Week ${esc(DATA.plan.week)} · ${esc(DATA.plan.plan)}</span>
+    <h1>Which workout today?</h1>
+    <div class="days">${days.map(([k, d]) => `<button class="day" data-day="${esc(k)}">
+      <b>${esc(d.title)}</b>
+      <ol>${d.exercises.map(e => `<li>${esc(nameOf(e.id))}</li>`).join("")}</ol>
+      <span class="meta">${d.exercises.length} exercise${d.exercises.length === 1 ? "" : "s"}${d.minutes ? ` · about ${d.minutes} min` : ""}</span></button>`).join("")}</div>
+    <p class="hint">Tap Next and Back to move. On a keyboard, the arrow keys work too.</p></section></main>`;
+}
+
+function render() {
+  if (!day) {
+    app.innerHTML = homeHTML();
+    app.querySelectorAll(".day").forEach(b => b.onclick = () => start(b.dataset.day));
+    return fitAll();
+  }
+  const s = slides[i], nxt = slides[i + 1];
+  const exs = slides.filter(x => x.kind === "ex");
+  const where = s.kind === "ex" ? `Exercise <b>${s.n + 1}</b> of ${exs.length}` : s.kind === "warmup" ? "Warm-up" : "Finisher";
+  const nextLabel = !nxt ? "Finish" : nxt.kind === "ex" ? nxt.ex.name : "Finisher";
+  app.innerHTML = `<header>
+      <span class="label where"><b>${esc(DATA.plan.days[day].title)}</b></span>
+      <span class="count">${where}</span>
+      <div class="bar"><i style="width:${((i + 1) / slides.length) * 100}%"></i></div>
+    </header>
+    <main>${slideHTML(s)}</main>
+    <nav>
+      <button class="btn ghost" data-go="home" aria-label="All workouts">${GRID}Days</button>
+      <button class="btn" data-go="-1" ${i === 0 ? "disabled" : ""}>${ARROW_L}Back</button>
+      <button class="btn primary" data-go="1">${nxt ? `<small>Next</small><span>${esc(nextLabel)}</span>${ARROW_R}` : `<span>Done</span>${CHECK}`}</button>
+    </nav>`;
+  app.querySelectorAll("nav button").forEach(b => b.onclick = () => go(b.dataset.go));
+  fitAll();
+}
+
+// Shrink a text block until it fits its box, so long names and instructions never spill off the TV.
+function fitAll() {
+  if (matchMedia("(orientation: portrait)").matches) {
+    app.querySelectorAll(".fit").forEach(el => el.style.fontSize = "");
+    return;
+  }
+  app.querySelectorAll(".fit").forEach(el => {
+    const base = parseFloat(el.dataset.base) || 2.4;
+    let k = 1;
+    el.style.fontSize = `calc(var(--u) * ${base})`;
+    while (el.scrollHeight > el.clientHeight + 1 && k > 0.42) {
+      k -= 0.04;
+      el.style.fontSize = `calc(var(--u) * ${(base * k).toFixed(3)})`;
+    }
+    // Still too long at the smallest size: let it scroll rather than cut words off.
+    el.style.overflowY = el.scrollHeight > el.clientHeight + 1 ? "auto" : "hidden";
+  });
+}
+
+function start(key) { day = key; slides = buildSlides(key); i = 0; keepAwake(); render(); }
+function go(g) {
+  if (g === "home" || (g === "1" && i === slides.length - 1)) { day = null; render(); return; }
+  const to = Math.max(0, Math.min(slides.length - 1, i + Number(g)));
+  if (to !== i) { i = to; render(); }
+}
+
+document.addEventListener("keydown", ev => {
+  if (!day) return;
+  if (ev.key === "ArrowRight" || ev.key === "PageDown") go("1");
+  if (ev.key === "ArrowLeft" || ev.key === "PageUp") go("-1");
+  if (ev.key === "Escape") go("home");
+});
+let x0 = null, y0 = null;
+document.addEventListener("touchstart", ev => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; }, {passive: true});
+document.addEventListener("touchend", ev => {
+  if (!day || x0 === null) return;
+  const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0; x0 = null;
+  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? "1" : "-1");
+});
+let resizeTimer;
+addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(fitAll, 120); });
+
+// Keep the phone screen on while mirroring (Safari 16.4+); harmless if not supported.
+let lock = null;
+async function keepAwake() {
+  try { if ("wakeLock" in navigator && !lock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => lock = null); } } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && day) keepAwake(); });
+
+render();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+</script>
+</body></html>

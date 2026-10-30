@@ -41,7 +41,11 @@
         "q": "goblet squat Squat University",
         "src": "Squat University",
         "len": "~3 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "9W5KAqHfDe8",
+          "src": "Fit Father Project"
+        }
       }
     },
     "pullup-negative": {
@@ -60,7 +64,11 @@
         "q": "pull up negatives form E3 Rehab",
         "src": "E3 Rehab",
         "len": "~3 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "gbPURTSxQLY",
+          "src": "Bodybuilding.com"
+        }
       }
     },
     "db-bench": {
@@ -78,7 +86,11 @@
         "q": "dumbbell bench press technique Jeff Nippard",
         "src": "Jeff Nippard",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "WLTU1j7Ur8M",
+          "src": "BarBend"
+        }
       }
     },
     "db-rdl": {
@@ -96,7 +108,11 @@
         "q": "dumbbell romanian deadlift form Jeff Nippard",
         "src": "Jeff Nippard",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "KN5vN3JskqI",
+          "src": "Steev"
+        }
       }
     },
     "kb-swing": {
@@ -115,7 +131,11 @@
         "q": "kettlebell swing tutorial StrongFirst",
         "src": "StrongFirst",
         "len": "~3 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "R4nj_XaMn6Q",
+          "src": "ShapeFit"
+        }
       }
     },
     "kb-deadlift": {
@@ -133,7 +153,11 @@
         "q": "kettlebell deadlift form tutorial",
         "src": "",
         "len": "",
-        "status": "pending"
+        "status": "pending",
+        "tv": {
+          "youtube_id": "9eVB3V3YFcg",
+          "src": "Brittany van Schravendijk"
+        }
       }
     },
     "db-row": {
@@ -151,7 +175,11 @@
         "q": "one arm dumbbell row form E3 Rehab",
         "src": "E3 Rehab",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "fURsHPHgssI",
+          "src": "The Healthy Habit"
+        }
       }
     },
     "incline-db-press": {
@@ -169,7 +197,11 @@
         "q": "incline dumbbell press form Jeff Nippard",
         "src": "Jeff Nippard",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "8bfJ3sfUTos",
+          "src": "Bodybuilding.com"
+        }
       }
     },
     "split-squat": {
@@ -187,7 +219,11 @@
         "q": "split squat form Squat University",
         "src": "Squat University",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "5VG4UnfA7Bk",
+          "src": "Steev"
+        }
       },
       "first_load": {
         "db_pair": 7.5
@@ -209,7 +245,11 @@
         "q": "farmers carry how to Squat University",
         "src": "Squat University",
         "len": "~2 min",
-        "status": "candidate"
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "z7E_YU9P1jU",
+          "src": "Dr. Carl Baird"
+        }
       }
     }
   }

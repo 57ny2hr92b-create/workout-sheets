@@ -1,0 +1,112 @@
+{
+  "exercises": {
+    "goblet-squat": {
+      "name": "Goblet squat",
+      "pattern": "squat",
+      "row1": "kg",
+      "cues": [
+        "Bell at your chest, elbows down.",
+        "Sit between your heels, chest tall.",
+        "Knees track over your middle toes."
+      ],
+      "x": "Heels lifting? Widen your stance slightly.",
+      "setup": "Bell held by the horns · feet just wider than hips",
+      "video": {
+        "q": "goblet squat Squat University",
+        "src": "Squat University",
+        "len": "~3 min",
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "9W5KAqHfDe8",
+          "src": "Fit Father Project"
+        }
+      }
+    },
+    "kb-swing": {
+      "name": "Kettlebell swing",
+      "pattern": "hinge",
+      "row1": "kg",
+      "cues": [
+        "Bell a foot in front; hinge and grab it.",
+        "Hike it back high between your thighs.",
+        "Snap hips forward, bell floats to chest height.",
+        "Arms are ropes; the hips do the work."
+      ],
+      "x": "Lifting with your arms? Hinge more.",
+      "setup": "Feet shoulder-width · shoes on",
+      "video": {
+        "q": "kettlebell swing tutorial StrongFirst",
+        "src": "StrongFirst",
+        "len": "~3 min",
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "R4nj_XaMn6Q",
+          "src": "ShapeFit"
+        }
+      }
+    },
+    "farmer-carry": {
+      "name": "Farmer carry",
+      "pattern": "carry",
+      "row1": "lb",
+      "row2": "steps",
+      "cues": [
+        "Pick up like a deadlift, flat back.",
+        "Tall posture, shoulders down and back.",
+        "Short, steady steps; breathe."
+      ],
+      "x": "Leaning or shuffling? Go lighter.",
+      "setup": "Clear a straight path, shoes on",
+      "video": {
+        "q": "farmers carry how to Squat University",
+        "src": "Squat University",
+        "len": "~2 min",
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "z7E_YU9P1jU",
+          "src": "Dr. Carl Baird"
+        }
+      }
+    },
+    "long-everything": {
+      "name": "Single-arm dumbbell Romanian deadlift to bent-over row with a pause",
+      "row2": "",
+      "setup": "Blackwing flat at the end of the mat · one dumbbell in your right hand, overhand grip · left hand on the bench pad for balance · shoes on, feet hip-width",
+      "cues": [
+        "Soft knees, then push your hips straight back like closing a car door with your butt.",
+        "Let the bell slide down the front of your leg until you feel a strong hamstring stretch.",
+        "Hold the bottom, keep your back flat, and pull your elbow up toward your hip.",
+        "Lower the bell under control, then squeeze your glutes to stand all the way up.",
+        "Switch hands after every set and match the reps on the weaker side.",
+        "Breathe out as you stand; reset your grip and posture before the next rep."
+      ],
+      "x": "Back rounding or the bell drifting away from your leg? Stop higher, go lighter, and keep the bell close the whole time.",
+      "video": {
+        "q": "x",
+        "status": "pending"
+      }
+    },
+    "bare-minimum": {
+      "name": "Plank",
+      "video": {
+        "q": "plank",
+        "status": "pending"
+      }
+    },
+    "supercalifragilistic": {
+      "name": "Supercalifragilisticexpialidociousdumbbellpressvariation",
+      "cues": [
+        "Averyveryveryverylongwordwithoutanyspacesthatcouldbreakthelayoutentirelyifunhandled."
+      ],
+      "x": "Short.",
+      "video": {
+        "q": "x",
+        "status": "candidate",
+        "tv": {
+          "youtube_id": "R4nj_XaMn6Q",
+          "src": "A very long channel name that goes on and on and on for a while"
+        }
+      }
+    }
+  }
+}
