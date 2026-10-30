@@ -18,7 +18,7 @@
   /* One unit that follows the screen, so a mirrored phone and a TV look the same. */
   --u: min(1vw, 1.78vh);
   --pad: calc(var(--u) * 3);
-  --radius: calc(var(--u) * 1.2);
+  --radius: calc(var(--u) * .25);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
@@ -40,8 +40,8 @@ header .where { min-width: 0; white-space: nowrap; overflow: hidden; text-overfl
 header .where b { color: var(--text); }
 header .count { font-family: "Barlow Condensed", sans-serif; font-weight: 600; color: var(--muted); font-size: calc(var(--u) * 2); }
 header .count b { color: var(--text); font-weight: 700; }
-.bar { grid-column: 1 / -1; height: calc(var(--u) * .45); border-radius: 99px; background: var(--line); overflow: hidden; }
-.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s ease; }
+.bar { grid-column: 1 / -1; height: calc(var(--u) * .45); border-radius: 0; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 0; transition: width .3s ease; }
 
 /* Footer controls */
 nav { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: calc(var(--u) * 1.2); }
@@ -65,7 +65,7 @@ svg.i { width: 1em; height: 1em; flex: none; }
 .home h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 3em; line-height: 1; margin-top: -.4em; }
 .home .label { font-size: .75em; }
 .days { display: grid; grid-template-columns: repeat(auto-fit, minmax(14em, 1fr)); gap: 1em; align-items: start; }
-.day { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: calc(var(--radius) * 1.4);
+.day { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 1.1em 1.2em; display: flex; flex-direction: column; gap: .5em; min-width: 0; }
 .day:active, .day:focus-visible { border-color: var(--accent); outline: none; }
 .day b { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.9em; line-height: 1.05;
@@ -104,7 +104,7 @@ svg.i { width: 1em; height: 1em; flex: none; }
 .note { display: flex; gap: calc(var(--u) * 1); align-items: flex-start; color: var(--muted); font-size: calc(var(--u) * 1.75); flex: none; }
 .note b { color: var(--text); font-weight: 600; }
 .tag { flex: none; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
-  border-radius: calc(var(--u) * .5); padding: 0 calc(var(--u) * .6); font-size: calc(var(--u) * 1.6); line-height: 1.5; }
+  border-radius: calc(var(--u) * .15); padding: 0 calc(var(--u) * .6); font-size: calc(var(--u) * 1.6); line-height: 1.5; }
 
 .teach.fit { display: flex; flex-direction: column; gap: .75em; font-size: calc(var(--u) * 2.4); }
 .teach h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.1em; line-height: 1; text-wrap: balance; overflow-wrap: anywhere; }
@@ -140,7 +140,7 @@ body[data-style~="cinema"]:not([data-style~="print"]) { --bg: #000; --panel: #12
 body[data-style~="cinema"] .ex { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto minmax(0, 1fr) auto auto auto;
   grid-template-areas: "video dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 2.4); row-gap: calc(var(--u) * 1.2); }
 body[data-style~="cinema"] .media { display: contents; }
-body[data-style~="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: calc(var(--radius) * 1.4); }
+body[data-style~="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: var(--radius); }
 body[data-style~="cinema"] .credit { grid-area: credit; margin: 0; }
 body[data-style~="cinema"] .dose { grid-area: dose; }
 body[data-style~="cinema"] .dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.1); }
