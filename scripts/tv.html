@@ -500,7 +500,7 @@ function goTo(n) {
 }
 function go(g) {
   if (g === "home") { closeRest(); day = null; render(); return; }
-  if (g === "finish") { store.set("last", {day, at: Date.now()}); store.del("session"); session = null; closeRest(); day = null; render(); return; }
+  if (g === "finish") { store.set("last", {day, at: Date.now()}); if (DATA.plan.days[day].once) store.set(`once:${DATA.plan.week}:${day}`, true); store.del("session"); session = null; closeRest(); day = null; render(); return; }
   goTo(i + Number(g));
 }
 
@@ -751,7 +751,10 @@ function slideHTML(s) {
 function homeHTML() {
   const days = Object.entries(DATA.plan.days), keys = days.map(([k]) => k);
   const last = store.get("last", null), old = store.get("session", null);
-  const upNext = last && keys.includes(last.day) ? keys[(keys.indexOf(last.day) + 1) % keys.length] : keys[0];
+  // A one-off day (like a fresh-start session) is up next until it's done; the rest rotate in order.
+  const cyc = keys.filter(k => !DATA.plan.days[k].once);
+  const onceLeft = keys.find(k => DATA.plan.days[k].once && !store.get(`once:${DATA.plan.week}:${k}`, false));
+  const upNext = onceLeft || (last && cyc.includes(last.day) ? cyc[(cyc.indexOf(last.day) + 1) % cyc.length] : cyc[0]);
   const ago = t => { const d = Math.round((Date.now() - t) / 86400000); return d <= 0 ? "today" : d === 1 ? "yesterday" : `${d} days ago`; };
   const fresh = old && DATA.plan.days[old.day] && Date.now() - old.started < 5 * 3600000;
   const resume = fresh ? (() => {

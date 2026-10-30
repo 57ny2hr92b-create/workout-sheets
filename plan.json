@@ -2,6 +2,75 @@
   "week": 2,
   "plan": "Foundations",
   "days": {
+    "S": {
+      "title": "Start Day: First Win",
+      "minutes": 30,
+      "warmup_min": 8,
+      "warmup": [
+        "Row, easy, 3 min",
+        "Joint circles, 1 min",
+        "10 bodyweight squats",
+        "5 scap pull-ups",
+        "10 incline push-ups"
+      ],
+      "exercises": [
+        {
+          "id": "goblet-squat",
+          "pair": "A",
+          "sets": 2,
+          "reps": [
+            10,
+            15
+          ],
+          "rest": 60
+        },
+        {
+          "id": "pullup-negative",
+          "pair": "A",
+          "sets": 2,
+          "reps": [
+            3,
+            5
+          ],
+          "rest": 75,
+          "extra": "lower for 3–5 s"
+        },
+        {
+          "id": "db-bench",
+          "pair": "B",
+          "sets": 2,
+          "reps": [
+            8,
+            12
+          ],
+          "rest": 60
+        },
+        {
+          "id": "db-rdl",
+          "pair": "B",
+          "sets": 2,
+          "reps": [
+            8,
+            12
+          ],
+          "rest": 60
+        },
+        {
+          "id": "kb-swing",
+          "sets": 2,
+          "reps": [
+            10,
+            15
+          ],
+          "rest": 45
+        }
+      ],
+      "finisher": {
+        "text": "Row easy, 5 min",
+        "detail": "full sentences pace, then stretch"
+      },
+      "once": true
+    },
     "A": {
       "title": "Day A: Full Body",
       "minutes": 55,
