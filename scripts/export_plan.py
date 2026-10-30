@@ -30,6 +30,8 @@ def export(week_path):
             ],
             "finisher": {k: v for k, v in t.get("finisher", {}).items() if k in ("text", "detail")},
         }
+        if t.get("once"):
+            days[key]["once"] = True
     plan = {"week": week["week"], "plan": week.get("plan", ""), "days": days}
     (ROOT / "plan.json").write_text(json.dumps(plan, indent=2, ensure_ascii=False) + "\n")
 
