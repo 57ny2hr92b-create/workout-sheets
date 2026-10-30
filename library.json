@@ -1,4 +1,7 @@
 {
+  "tv": {
+    "max_clip_s": 60
+  },
   "equipment": {
     "db_pair": [
       7.5,
@@ -44,7 +47,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "9W5KAqHfDe8",
-          "src": "Fit Father Project"
+          "src": "Fit Father Project",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "4YVgTSY2E38",
+            "src": "Goblet Squat (Exercise Library)",
+            "status": "unreviewed"
+          },
+          "pictogram": "squat"
         }
       }
     },
@@ -67,7 +77,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "gbPURTSxQLY",
-          "src": "Bodybuilding.com"
+          "src": "Bodybuilding.com",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "FFaU5ZxOyy8",
+            "src": "Master the Negative Pull-Up in 30 Seconds",
+            "status": "unreviewed"
+          },
+          "pictogram": "pullup"
         }
       }
     },
@@ -89,7 +106,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "WLTU1j7Ur8M",
-          "src": "BarBend"
+          "src": "BarBend",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "M0tN99QgPyU",
+            "src": "How to Do the Flat Dumbbell Bench Press",
+            "status": "unreviewed"
+          },
+          "pictogram": "bench"
         }
       }
     },
@@ -111,7 +135,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "KN5vN3JskqI",
-          "src": "Steev"
+          "src": "Steev",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "KYIJdN2gBmQ",
+            "src": "Dumbbell Romanian Deadlift Tutorial",
+            "status": "unreviewed"
+          },
+          "pictogram": "rdl"
         }
       }
     },
@@ -134,7 +165,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "R4nj_XaMn6Q",
-          "src": "ShapeFit"
+          "src": "ShapeFit",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "B_x0tp3HIbk",
+            "src": "How To Do a Proper Kettlebell Swing",
+            "status": "unreviewed"
+          },
+          "pictogram": "swing"
         }
       }
     },
@@ -156,7 +194,14 @@
         "status": "pending",
         "tv": {
           "youtube_id": "9eVB3V3YFcg",
-          "src": "Brittany van Schravendijk"
+          "src": "Brittany van Schravendijk",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "sDbMsk3d6F4",
+            "src": "How To Do A Kettlebell Deadlift",
+            "status": "unreviewed"
+          },
+          "pictogram": "kb-deadlift"
         }
       }
     },
@@ -178,7 +223,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "fURsHPHgssI",
-          "src": "The Healthy Habit"
+          "src": "The Healthy Habit",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "S_kOe9mOLlg",
+            "src": "How to Do a Single Arm Dumbbell Row",
+            "status": "unreviewed"
+          },
+          "pictogram": "row"
         }
       }
     },
@@ -200,7 +252,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "8bfJ3sfUTos",
-          "src": "Bodybuilding.com"
+          "src": "Bodybuilding.com",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "ljyqdC4ydrM",
+            "src": "Schaum Fitness",
+            "status": "unreviewed"
+          },
+          "pictogram": "incline"
         }
       }
     },
@@ -222,7 +281,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "5VG4UnfA7Bk",
-          "src": "Steev"
+          "src": "Steev",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "Ca9P1Te6vvA",
+            "src": "DB Split Squat (Exercise Library)",
+            "status": "unreviewed"
+          },
+          "pictogram": "split-squat"
         }
       },
       "first_load": {
@@ -248,7 +314,14 @@
         "status": "candidate",
         "tv": {
           "youtube_id": "z7E_YU9P1jU",
-          "src": "Dr. Carl Baird"
+          "src": "Dr. Carl Baird",
+          "status": "unreviewed",
+          "backup": {
+            "youtube_id": "OalyeWGbRb0",
+            "src": "Farmer's Carry 30 Sec Tutorial",
+            "status": "unreviewed"
+          },
+          "pictogram": "carry"
         }
       }
     }

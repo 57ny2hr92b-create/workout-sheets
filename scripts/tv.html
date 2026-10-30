@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Workout TV">
-<meta name="theme-color" content="#0b0c0e">
+<meta name="theme-color" content="#f6f4ef">
 <title>Workout TV</title>
 <style>
 @font-face { font-family: Barlow; font-weight: 500; src: url(fonts/Barlow-500.woff2) format("woff2"); }
@@ -14,46 +14,60 @@
 @font-face { font-family: "Barlow Condensed"; font-weight: 700; src: url(fonts/BarlowCondensed-700.woff2) format("woff2"); }
 :root {
   --bg: #0b0c0e; --panel: #15171a; --panel-2: #1c1f23; --line: #272b30; --text: #f4f4f1; --muted: #9ba1a8;
-  --accent: #f5b83d; --accent-ink: #1a1305; --warn: #ef7b63; --ok: #7fcf95;
+  --accent: #f5b83d; --accent-ink: #1a1305; --warn: #ef7b63; --ok: #7fcf95; --scrim: rgba(5, 6, 8, .86);
   /* One unit that follows the screen, so a mirrored phone and a TV look the same. */
   --u: min(1vw, 1.78vh);
   --pad: calc(var(--u) * 3);
+  --gap: calc(var(--u) * 2.4);
   --radius: calc(var(--u) * .25);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
 body { font-family: Barlow, system-ui, sans-serif; font-weight: 500; line-height: 1.3; font-size: calc(var(--u) * 2);
   -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
-.cond { font-family: "Barlow Condensed", Barlow, sans-serif; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 .label { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
   color: var(--muted); font-size: calc(var(--u) * 1.5); }
+.digits { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
 
 #app { position: fixed; inset: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 1.8);
-  padding: calc(var(--u) * 2.2) var(--pad) calc(var(--u) * 1.8);
+  padding: calc(var(--u) * 2) var(--pad) calc(var(--u) * 1.8);
   padding-left: max(var(--pad), env(safe-area-inset-left)); padding-right: max(var(--pad), env(safe-area-inset-right)); }
 main { flex: 1; min-height: 0; display: flex; }
 
-/* Header: where you are in the workout */
-header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: calc(var(--u) * .8) calc(var(--u) * 2); }
-header .where { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Header: day, clock, sound, and one progress segment per slide */
+header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: calc(var(--u) * 1) calc(var(--u) * 2); }
+header .where { min-width: 0; display: flex; align-items: baseline; gap: calc(var(--u) * 1.4); white-space: nowrap; overflow: hidden; }
 header .where b { color: var(--text); }
-header .count { font-family: "Barlow Condensed", sans-serif; font-weight: 600; color: var(--muted); font-size: calc(var(--u) * 2); }
-header .count b { color: var(--text); font-weight: 700; }
-.bar { grid-column: 1 / -1; height: calc(var(--u) * .45); border-radius: 0; background: var(--line); overflow: hidden; }
-.bar i { display: block; height: 100%; background: var(--accent); border-radius: 0; transition: width .3s ease; }
+header .where .step { color: var(--muted); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: calc(var(--u) * 2); letter-spacing: 0; text-transform: none; }
+header .tools { display: flex; align-items: center; gap: calc(var(--u) * 1.2); }
+.clockchip { display: inline-flex; align-items: center; gap: calc(var(--u) * .6); font-size: calc(var(--u) * 2.2); color: var(--text); }
+.clockchip svg { color: var(--muted); }
+.iconbtn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; width: calc(var(--u) * 4.4); height: calc(var(--u) * 4.4);
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--muted); }
+.iconbtn svg { width: 55%; height: 55%; }
+.steps-bar { grid-column: 1 / -1; display: flex; gap: calc(var(--u) * .45); }
+.steps-bar button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * .45); align-items: stretch; text-align: left; padding-top: 2px; }
+.steps-bar i { display: block; height: calc(var(--u) * .5); background: var(--line); }
+.steps-bar .done i { background: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.steps-bar .now i { background: var(--accent); }
+.steps-bar span { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 1.35); letter-spacing: .06em; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.steps-bar .now span { color: var(--text); }
 
 /* Footer controls */
-nav { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: calc(var(--u) * 1.2); }
-.btn { display: inline-flex; align-items: center; gap: calc(var(--u) * .8); min-height: 44px; white-space: nowrap;
-  font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 2.3);
+nav { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: center; gap: calc(var(--u) * 1.2); }
+nav .hint { color: var(--muted); font-size: calc(var(--u) * 1.6); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: calc(var(--u) * .8); min-height: 44px; white-space: nowrap;
+  font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 2.3); letter-spacing: .01em;
   padding: calc(var(--u) * .8) calc(var(--u) * 2); border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); }
 .btn.ghost { background: none; color: var(--muted); }
 .btn:disabled { opacity: .3; cursor: default; }
-.btn.primary { justify-self: end; max-width: min(100%, calc(var(--u) * 52)); background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+nav .btn.primary { justify-self: end; max-width: min(100%, calc(var(--u) * 52)); }
 .btn.primary span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.btn.primary small { font-family: Barlow, sans-serif; font-weight: 600; font-size: .62em; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
-.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.btn small { font-family: Barlow, sans-serif; font-weight: 600; font-size: .62em; opacity: .75; text-transform: uppercase; letter-spacing: .06em; }
+.btn:focus-visible, .iconbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 svg.i { width: 1em; height: 1em; flex: none; }
 
 /* Text that shrinks to fit its box (see fit() below) */
@@ -61,257 +75,768 @@ svg.i { width: 1em; height: 1em; flex: none; }
 
 /* Home: pick a day */
 .home { width: 100%; }
-.home.fit { display: flex; flex-direction: column; justify-content: center; gap: 1.2em; font-size: calc(var(--u) * 2); }
-.home h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 3em; line-height: 1; margin-top: -.4em; }
+.home.fit { display: flex; flex-direction: column; justify-content: center; gap: 1.1em; font-size: calc(var(--u) * 2); }
+.brand { display: flex; align-items: center; gap: .6em; }
+.brand .mark { display: grid; place-items: center; width: 1.7em; height: 1.7em; background: var(--accent); color: var(--accent-ink); border-radius: var(--radius); }
+.brand .mark svg { width: 70%; height: 70%; }
+.home h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 3em; line-height: 1; }
 .home .label { font-size: .75em; }
-.days { display: grid; grid-template-columns: repeat(auto-fit, minmax(14em, 1fr)); gap: 1em; align-items: start; }
-.day { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.1em 1.2em; display: flex; flex-direction: column; gap: .5em; min-width: 0; }
+.resume { display: flex; align-items: center; gap: 1em; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); padding: .7em 1em; }
+.resume p { flex: 1; min-width: 12em; }
+.resume p b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: 1.3em; }
+.resume .btn { font-size: 1.05em; }
+.days { display: grid; grid-template-columns: repeat(auto-fit, minmax(16em, 1fr)); gap: 1em; align-items: stretch; }
+.day { position: relative; text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.1em 1.3em 1.2em; display: flex; flex-direction: column; gap: .7em; min-width: 0; }
+.day.up { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
 .day:active, .day:focus-visible { border-color: var(--accent); outline: none; }
+.day .top { min-height: 1.6em; display: flex; align-items: center; justify-content: space-between; gap: 1em; }
+.day .pill { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8em; letter-spacing: .08em; text-transform: uppercase;
+  background: var(--accent); color: var(--accent-ink); padding: .1em .55em; border-radius: calc(var(--u) * .15); }
+.day .last { color: var(--muted); font-size: .8em; }
 .day b { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.9em; line-height: 1.05;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.day ol { list-style: none; display: grid; gap: .2em; color: var(--muted); font-size: .9em; }
-.day ol li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.day .meta { color: var(--accent); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: .9em; }
+.day ol { list-style: none; display: grid; gap: .15em; font-size: .92em; border-top: 1px solid var(--line); padding-top: .6em; }
+.day ol li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr) auto; gap: .4em; align-items: baseline; }
+.day ol li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day ol li .k { font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--muted); }
+.day ol li .d { font-family: "Barlow Condensed", sans-serif; font-weight: 600; color: var(--muted); }
+.day .meta { display: flex; gap: 1.2em; color: var(--muted); font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: .95em; margin-top: auto; }
+.day .meta b { font-size: 1em; color: var(--text); display: inline; }
 .home .hint { color: var(--muted); font-size: .85em; }
 
-/* Warm-up and finisher */
-.list { flex-direction: column; justify-content: center; width: 100%; }
-.list .fit { display: flex; flex-direction: column; justify-content: center; gap: .9em; height: 100%; font-size: calc(var(--u) * 2.6); }
-.list h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.3em; line-height: 1.02; max-width: 30em; }
-.list ol { list-style: none; display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--rows), auto); gap: .5em 2.4em; justify-content: start; }
-.list li { display: flex; gap: .6em; align-items: baseline; max-width: 22em; }
-.list li::before { content: ""; flex: none; width: .45em; height: .45em; border-radius: 50%; background: var(--accent); transform: translateY(-.12em); }
-.list .sub { color: var(--muted); font-size: .85em; max-width: 36em; }
+/* Warm-up, finisher and done: content on the left, a big clock on the right */
+.timed { display: grid; grid-template-columns: minmax(0, 58fr) minmax(0, 42fr); gap: calc(var(--u) * 3); width: 100%; }
+.timed > .fit:not(.clock) { display: flex; flex-direction: column; justify-content: center; gap: .8em; font-size: calc(var(--u) * 2.5); }
+.timed h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.2em; line-height: 1.02; text-wrap: balance; }
+.timed .sub { color: var(--muted); font-size: .85em; max-width: 36em; }
+.checks { list-style: none; display: grid; grid-auto-flow: column; grid-template-rows: repeat(var(--rows), auto); gap: .35em 1.6em; justify-content: start; }
+.checks li { min-width: 0; }
+.checks button { width: 100%; display: grid; grid-template-columns: 1.3em minmax(0, 1fr) auto; gap: .6em; align-items: center; text-align: left;
+  padding: .32em .5em .32em .2em; border-radius: var(--radius); }
+.checks .box { width: 1.15em; height: 1.15em; border: 2px solid var(--muted); border-radius: 50%; display: grid; place-items: center; }
+.checks .box svg { width: 75%; height: 75%; opacity: 0; }
+.checks .done .box { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.checks .done .box svg { opacity: 1; }
+.checks .done .t { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
+.checks .run { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.checks .chip { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: .8em; border: 1px solid var(--line); background: var(--panel);
+  padding: .05em .55em; border-radius: calc(var(--u) * .15); display: inline-flex; gap: .3em; align-items: center; font-variant-numeric: tabular-nums; }
+.checks .run .chip { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
-/* Exercise slide: video and dose on the left, coaching on the right */
-.ex { display: grid; grid-template-columns: minmax(0, 53fr) minmax(0, 47fr); gap: calc(var(--u) * 3); width: 100%; }
-.media { display: flex; flex-direction: column; gap: calc(var(--u) * 1.4); min-height: 0; }
-.video { position: relative; width: 100%; aspect-ratio: 16 / 9; flex: 0 1 auto; min-height: 0; background: #000;
-  border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
-.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.video .none { position: absolute; inset: 0; display: grid; place-content: center; gap: calc(var(--u) * .6); text-align: center; padding: 8%;
-  background: radial-gradient(circle at 50% 40%, var(--panel-2), #000 75%); color: var(--muted); }
-.video .none b { color: var(--text); font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 2.6); }
-.credit { flex: none; color: var(--muted); font-size: calc(var(--u) * 1.5); margin-top: calc(var(--u) * -.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.dose { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); flex: none; }
-.dose div { padding: calc(var(--u) * 1) calc(var(--u) * 1.6); min-width: 0; }
+.clock { font-size: var(--u); align-self: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2em;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 3em 2.4em; min-height: 0; max-height: 100%; text-align: center; }
+.clock > * { flex: none; }
+.clock .label { font-size: 1.8em; }
+.clock .big { font-size: 15em; line-height: .9; }
+.clock .name { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 3.4em; line-height: 1; min-height: 1em; text-transform: uppercase; letter-spacing: .03em; }
+.clock .of { color: var(--muted); font-size: 1.8em; }
+.clock .btn { font-size: 2.3em; }
+.meter { width: 100%; height: calc(var(--u) * .7); background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--accent); }
+.clock .row { display: flex; gap: 1em; flex-wrap: wrap; justify-content: center; }
+.clock.hot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.clock.hot .label, .clock.hot .of { color: inherit; opacity: .75; }
+.clock.hot .meter { background: color-mix(in srgb, var(--accent-ink) 25%, var(--accent)); }
+.clock.hot .meter i { background: var(--accent-ink); }
+.clock.hot .btn { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); }
+.clock.hot .btn.primary { background: var(--bg); color: var(--text); border-color: var(--bg); }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); }
+.stats div { padding: .6em .9em; }
+.stats div + div { border-left: 1px solid var(--line); }
+.stats .digits { display: block; font-size: 2em; line-height: 1.05; }
+
+/* Exercise slide. Default layout puts the video big on the left and coaching on the right. */
+.ex { display: grid; width: 100%; gap: calc(var(--u) * 1.3) calc(var(--u) * 2.6);
+  grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas: "stage dose" "stage track" "stage teach"; }
+.stage { grid-area: stage; display: flex; flex-direction: column; gap: calc(var(--u) * .8); min-height: 0; }
+.video { position: relative; flex: 1; min-height: 0; background: #000; border-radius: var(--radius); overflow: hidden; }
+.video iframe, .video > div { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.video .pic { position: absolute; inset: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: var(--panel); color: var(--text); padding: 4% 6% 3%; }
+.video .pic svg { width: 100%; height: 100%; }
+.video .pic p { text-align: center; color: var(--muted); font-size: calc(var(--u) * 1.6); }
+.video .none { position: absolute; inset: 0; display: grid; place-content: center; gap: calc(var(--u) * .6); text-align: center; padding: 8%; background: var(--panel); color: var(--muted); }
+.video .none b { color: var(--text); font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 2.8); }
+.mbar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 1.4); min-width: 0; }
+.credit { color: var(--muted); font-size: calc(var(--u) * 1.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.seg { flex: none; display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+.seg button { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 1.6); letter-spacing: .04em; text-transform: uppercase;
+  color: var(--muted); padding: 0 calc(var(--u) * 1.2); min-height: max(32px, calc(var(--u) * 3.4)); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+.dose { grid-area: dose; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.3); min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: calc(var(--u) * .7); }
 .dose div + div { border-left: 1px solid var(--line); }
-.dose .num { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent); font-size: calc(var(--u) * 3.6); line-height: 1.05;
+.dose .num { flex: none; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--text); font-size: calc(var(--u) * 3.1); line-height: 1.05;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dose .num small { font-size: .55em; font-weight: 600; margin-left: .15em; }
-.dose .label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.note { display: flex; gap: calc(var(--u) * 1); align-items: flex-start; color: var(--muted); font-size: calc(var(--u) * 1.75); flex: none; }
+.dose .label { min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.track { grid-area: track; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: calc(var(--u) * 1.4);
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(var(--u) * 1.1) calc(var(--u) * 1.3); min-width: 0; }
+.track .dots { display: flex; gap: calc(var(--u) * .6); margin-top: calc(var(--u) * .5); }
+.track .dots button { width: max(24px, calc(var(--u) * 2.6)); height: max(24px, calc(var(--u) * 2.6)); border-radius: 50%; border: 2px solid var(--muted);
+  display: grid; place-items: center; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 1.5); color: var(--muted); }
+.track .dots .on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.track .what { min-width: 0; display: flex; flex-direction: column; }
+.track .what b { font-family: "Barlow Condensed", sans-serif; font-size: calc(var(--u) * 2.6); line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track .btn { font-size: calc(var(--u) * 2.6); padding: calc(var(--u) * 1.1) calc(var(--u) * 2.2); }
+
+.notes { flex: none; display: grid; gap: calc(var(--u) * .7); min-width: 0; }
+.note { display: flex; gap: calc(var(--u) * 1); align-items: flex-start; color: var(--muted); font-size: calc(var(--u) * 1.75); }
 .note b { color: var(--text); font-weight: 600; }
 .tag { flex: none; font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
   border-radius: calc(var(--u) * .15); padding: 0 calc(var(--u) * .6); font-size: calc(var(--u) * 1.6); line-height: 1.5; }
 
-.teach.fit { display: flex; flex-direction: column; gap: .75em; font-size: calc(var(--u) * 2.4); }
-.teach h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 2.1em; line-height: 1; text-wrap: balance; overflow-wrap: anywhere; }
+.teach.fit { grid-area: teach; display: flex; flex-direction: column; gap: .75em; font-size: calc(var(--u) * 2.4); }
+.teach h1 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.9em; line-height: 1; text-wrap: balance; overflow-wrap: anywhere;
+  display: flex; align-items: flex-start; gap: .35em; }
+.teach h1 .slot { flex: none; font-size: .55em; line-height: 1; padding: .2em .35em; margin-top: .14em; background: var(--text); color: var(--bg); border-radius: calc(var(--u) * .15); }
 .teach .label { font-size: .62em; margin-bottom: .3em; display: block; }
 .teach .setup { color: var(--muted); font-size: .86em; }
 .teach .setup ul { list-style: none; display: grid; gap: .15em; color: var(--text); }
 .teach .setup li { display: flex; gap: .5em; }
 .teach .setup li::before { content: "–"; color: var(--muted); }
-.steps { list-style: none; counter-reset: s; display: grid; gap: .5em; }
-.steps li { counter-increment: s; display: grid; grid-template-columns: 1.6em 1fr; gap: .55em; line-height: 1.25; overflow-wrap: anywhere; }
-.steps li::before { content: counter(s); font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
+.how { list-style: none; counter-reset: s; display: grid; gap: .5em; }
+.how li { counter-increment: s; display: grid; grid-template-columns: 1.6em 1fr; gap: .55em; line-height: 1.25; overflow-wrap: anywhere; }
+.how li::before { content: counter(s); font-family: "Barlow Condensed", sans-serif; font-weight: 700; color: var(--accent-ink); background: var(--accent);
   width: 1.4em; height: 1.4em; border-radius: 50%; display: grid; place-items: center; font-size: .82em; margin-top: .08em; }
 .avoid { background: color-mix(in srgb, var(--warn) 9%, var(--panel)); border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
   border-radius: var(--radius); padding: .55em .8em; font-size: .9em; }
 .avoid .label { color: var(--warn); }
-.remind { color: var(--ok); font-size: .74em; }
+
+/* Long coaching text: video, sets and the set tracker share the left; coaching gets the whole right side */
+.ex.tight { grid-template-columns: minmax(0, 48fr) minmax(0, 52fr) !important; grid-template-rows: minmax(0, 1fr) auto auto !important;
+  grid-template-areas: "stage teach" "dose teach" "track teach" !important; }
+
+/* Rest overlay */
+#rest { position: fixed; inset: 0; z-index: 10; display: none; place-items: center; background: var(--scrim); padding: var(--pad); }
+#rest.on { display: grid; }
+#rest .card { width: min(100%, calc(var(--u) * 78)); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: calc(var(--u) * 3) calc(var(--u) * 4); display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 1.4); text-align: center; }
+#rest .big { font-size: calc(var(--u) * 22); line-height: .85; }
+#rest .nextup { font-size: calc(var(--u) * 2.4); color: var(--muted); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rest .nextup b { color: var(--text); font-family: "Barlow Condensed", sans-serif; font-size: 1.2em; }
+#rest .row { display: flex; gap: calc(var(--u) * 1.2); }
+#toast { position: fixed; left: 50%; top: calc(var(--u) * 1.4); transform: translateX(-50%); z-index: 11; background: var(--text); color: var(--bg);
+  font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: calc(var(--u) * 2.4); padding: calc(var(--u) * .6) calc(var(--u) * 2);
+  border-radius: var(--radius); opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap; }
+#toast.on { opacity: 1; }
 
 /* ---------- Looks: ?style= takes print (colours) and/or cinema or scoreboard (layout); the default is print + cinema ---------- */
 
 /* Print: light paper and black ink, like the printed sheets */
 body[data-style~="print"] { --bg: #f6f4ef; --panel: #ffffff; --panel-2: #ece9e2; --line: #d8d4cb; --text: #141414; --muted: #615d56;
-  --accent: #141414; --accent-ink: #ffffff; --warn: #b4321f; --ok: #2f6b40; }
-body[data-style~="print"] .video { border-color: #141414; }
-body[data-style~="print"] .video .none { background: radial-gradient(circle at 50% 40%, #3a3a3a, #111 75%); }
-body[data-style~="print"] .video .none b { color: #fff; }
-body[data-style~="print"] .dose .num { color: var(--text); }
+  --accent: #141414; --accent-ink: #ffffff; --warn: #b4321f; --ok: #2f6b40; --scrim: rgba(246, 244, 239, .9); }
 body[data-style~="print"] .avoid { background: #fff; border: 2px solid var(--warn); }
 body[data-style~="print"] .teach h1, body[data-style~="print"] .home h1 { text-transform: uppercase; letter-spacing: .01em; }
-body[data-style~="print"] .teach h1 { border-bottom: 3px solid var(--text); padding-bottom: .12em; }
+body[data-style~="print"] .teach h1 { border-bottom: 3px solid var(--text); padding-bottom: .14em; }
+body[data-style~="print"] #rest .card { border: 2px solid var(--text); }
 
-/* Cinema: a big video takes most of the screen, coaching sits in a slim sidebar */
+/* Gym (no layout given): the original split with a 16:9 video and the sets under it */
+body:not([data-style~="cinema"]):not([data-style~="scoreboard"]) .ex { grid-template-columns: minmax(0, 53fr) minmax(0, 47fr); }
+body:not([data-style~="cinema"]):not([data-style~="scoreboard"]) .video { flex: 0 1 auto; aspect-ratio: 16 / 9; }
+
+/* Cinema without paper colours: black */
 body[data-style~="cinema"]:not([data-style~="print"]) { --bg: #000; --panel: #121417; --line: #24282d; --accent: #4fe3c1; --accent-ink: #04201a; }
-body[data-style~="cinema"] .ex { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto minmax(0, 1fr) auto auto auto;
-  grid-template-areas: "video dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 2.4); row-gap: calc(var(--u) * 1.2); }
-body[data-style~="cinema"] .media { display: contents; }
-body[data-style~="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: var(--radius); }
-body[data-style~="cinema"] .credit { grid-area: credit; margin: 0; }
-body[data-style~="cinema"] .dose { grid-area: dose; }
-body[data-style~="cinema"] .dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.1); }
-body[data-style~="cinema"] .dose .num { font-size: calc(var(--u) * 3); }
-body[data-style~="cinema"] .note { grid-area: note1; }
-body[data-style~="cinema"] .note + .note { grid-area: note2; }
-body[data-style~="cinema"] .teach.fit { grid-area: teach; }
-body[data-style~="cinema"] .teach h1 { font-size: 1.8em; }
 
 /* Scoreboard: huge sets, reps and rest across the top; video and steps below */
 body[data-style~="scoreboard"] { --bg: #0d1220; --panel: #151c2e; --panel-2: #1b2338; --line: #26304a; --muted: #93a0bd; --accent: #ff5d3a; --accent-ink: #fff; }
-body[data-style~="scoreboard"] .ex { grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
-  grid-template-rows: auto minmax(0, 1fr) auto auto auto; grid-template-areas: "dose dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 3); row-gap: calc(var(--u) * 1.2); }
-body[data-style~="scoreboard"] .media { display: contents; }
-body[data-style~="scoreboard"] .dose { grid-area: dose; background: none; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding-bottom: calc(var(--u) * .6); }
-body[data-style~="scoreboard"] .dose div { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 1.6); }
+body[data-style~="scoreboard"] .ex { grid-template-columns: minmax(0, 50fr) minmax(0, 50fr); grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas: "dose dose" "stage track" "stage teach"; }
+body[data-style~="scoreboard"] .dose { background: none; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding-bottom: calc(var(--u) * .6); }
+body[data-style~="scoreboard"] .dose div { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 1.6); border: 0; }
 body[data-style~="scoreboard"] .dose div:first-child { padding-left: 0; }
-body[data-style~="scoreboard"] .dose .num { font-size: calc(var(--u) * 6.4); color: var(--text); }
+body[data-style~="scoreboard"] .dose .num { font-size: calc(var(--u) * 6.4); }
 body[data-style~="scoreboard"] .dose .label { font-size: calc(var(--u) * 2); color: var(--accent); }
-body[data-style~="scoreboard"] .video { grid-area: video; aspect-ratio: auto; height: 100%; }
-body[data-style~="scoreboard"] .credit { grid-area: credit; margin: 0; }
-body[data-style~="scoreboard"] .note { grid-area: note1; }
-body[data-style~="scoreboard"] .note + .note { grid-area: note2; }
-body[data-style~="scoreboard"] .teach.fit { grid-area: teach; }
-body[data-style~="scoreboard"] .steps li::before { border-radius: calc(var(--u) * .4); }
+
+/* Short screens (a phone on its side): slimmer header and footer, so the slide gets the room */
+@media (orientation: landscape) and (max-height: 560px) {
+  #app { gap: calc(var(--u) * 1.3); padding-top: calc(var(--u) * 1.4); padding-bottom: calc(var(--u) * 1.4); }
+  .steps-bar span { display: none; }
+  .iconbtn { min-width: 36px; min-height: 36px; }
+  nav .hint { display: none; }
+  .btn { min-height: 40px; }
+}
 
 /* Phone held upright: stack and scroll, and ask for landscape */
 .rotate { display: none; }
 @media (orientation: portrait) {
   :root { --u: 2vw; }
   html, body { overflow: auto; } #app { position: static; min-height: 100%; }
-  main { display: block; } .ex { grid-template-columns: 1fr; }
+  main { display: block; }
   .fit { overflow: visible; }
-  .rotate { display: block; color: var(--accent); margin-bottom: calc(var(--u) * 2); font-size: calc(var(--u) * 2.6); }
-  body[data-style] .ex { display: flex; flex-direction: column; gap: calc(var(--u) * 2); }
-  body[data-style] .media { display: flex; flex-direction: column; gap: calc(var(--u) * 1.4); }
-  body[data-style] .video { aspect-ratio: 16 / 9; height: auto; }
+  .rotate { display: block; color: var(--text); font-weight: 600; margin-bottom: calc(var(--u) * 2); font-size: calc(var(--u) * 2.6); }
+  body[data-style] .ex, body .ex, .timed { display: flex; flex-direction: column; gap: calc(var(--u) * 2); }
+  body[data-style] .video { flex: none; aspect-ratio: 16 / 9; height: auto; }
+  .dose { order: 1; } .stage { order: 0; } .track { order: 2; } .teach { order: 3; }
+  nav { grid-template-columns: auto auto minmax(0, 1fr); } nav .hint { display: none; }
 }
 </style></head><body>
 <div id="app"></div>
+<div id="rest" role="dialog" aria-label="Rest timer"></div>
+<div id="toast" aria-live="polite"></div>
 <noscript>Turn on JavaScript to use the slideshow.</noscript>
 <script>
 const DATA = __DATA__;
+const MAX_CLIP = (DATA.settings || {}).max_clip_s || 60;
 // Looks are a colour scheme plus a layout, e.g. ?style=print,cinema. ?style=gym is the original dark look.
 const STYLES = ["print", "cinema", "scoreboard"];
 const DEFAULT_STYLE = "print cinema";
 const asked = new URLSearchParams(location.search).get("style");
 document.body.dataset.style = asked === null ? DEFAULT_STYLE : asked.split(/[\s,]+/).filter(x => STYLES.includes(x)).join(" ");
-const app = document.getElementById("app");
-const ARROW_R = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-const ARROW_L = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
-const GRID = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>';
-const CHECK = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
-let day = null, i = 0, slides = [];
+const app = document.getElementById("app"), restEl = document.getElementById("rest"), toastEl = document.getElementById("toast");
+
+const svg = (d, w = 2.4) => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON = {
+  right: svg('<path d="M5 12h14M13 6l6 6-6 6"/>', 2.6), left: svg('<path d="M19 12H5M11 6l-6 6 6 6"/>', 2.6),
+  grid: svg('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>', 2.2),
+  check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 2.8), play: svg('<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>', 1.6),
+  pause: svg('<path d="M8 5v14M16 5v14"/>', 3), clock: svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/>', 2.2),
+  sound: svg('<path d="M4 9.5v5h4l5 4v-13l-5 4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>', 2.2),
+  mute: svg('<path d="M4 9.5v5h4l5 4v-13l-5 4z" fill="currentColor"/><path d="M17 9.5l5 5M22 9.5l-5 5"/>', 2.2),
+  bell: svg('<circle cx="12" cy="14.5" r="6"/><path d="M8.5 9.5a3.5 3.5 0 0 1 7 0"/>', 2.4),
+};
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 const range = r => Array.isArray(r) ? (r.length < 2 || r[0] === r[1] ? r[0] : `${r[0]}–${r[1]}`) : (r ?? "");
 const unit = ex => ex.row2 === "steps" ? "steps" : "reps";
 const nameOf = id => (DATA.exercises[id] || {}).name || id;
 const rest = s => !s ? "" : s >= 120 && s % 60 === 0 ? `${s / 60}<small>min</small>` : `${s}<small>s</small>`;
+const mmss = ms => { const t = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`; };
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+
+// Saved on this phone only: the workout in progress, the last finished day, and the sound setting.
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("wtv:" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("wtv:" + k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem("wtv:" + k); } catch (e) {} },
+};
+
+/* ---------- Sound: short beeps for the last 3 seconds of any timer ---------- */
+let audio = null, soundOn = store.get("sound", true);
+function unlockAudio() {
+  try { if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === "suspended") audio.resume(); } catch (e) {}
+}
+function beep(freq = 660, dur = .12) {
+  if (!soundOn || !audio) return;
+  try {
+    const o = audio.createOscillator(), g = audio.createGain(), t = audio.currentTime;
+    o.frequency.value = freq; o.type = "sine"; o.connect(g); g.connect(audio.destination);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.4, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.start(t); o.stop(t + dur + .02);
+  } catch (e) {}
+}
+addEventListener("pointerdown", unlockAudio, {passive: true});
+addEventListener("keydown", unlockAudio);
+
+/* ---------- Countdown timer that survives a slow phone: it runs off the clock, not off ticks ---------- */
+class Countdown {
+  constructor(seconds, onTick, onDone) { this.total = seconds * 1000; this.left = this.total; this.running = false; this.onTick = onTick; this.onDone = onDone; this.last = null; }
+  remaining() { return this.running ? Math.max(0, this.end - Date.now()) : this.left; }
+  start() { if (this.running || this.left <= 0) return; this.running = true; this.end = Date.now() + this.left; this.t = setInterval(() => this.tick(), 100); this.tick(); }
+  pause() { if (!this.running) return; this.left = this.remaining(); this.running = false; clearInterval(this.t); this.onTick(this); }
+  toggle() { this.running ? this.pause() : this.start(); }
+  add(s) { if (this.running) this.end += s * 1000; else this.left = Math.max(0, this.left + s * 1000); this.total = Math.max(1000, this.total + s * 1000); this.tick(); }
+  kill() { this.running = false; clearInterval(this.t); }
+  tick() {
+    const r = this.remaining(), sec = Math.ceil(r / 1000);
+    if (this.running && sec !== this.last && sec > 0 && sec <= 3) beep(660, .12);
+    this.last = sec;
+    this.onTick(this);
+    if (this.running && r <= 0) { this.kill(); this.left = 0; beep(880, .45); this.onDone && this.onDone(); }
+  }
+}
+let slideTimers = [];
+const killSlideTimers = () => { slideTimers.forEach(t => t.kill()); slideTimers = []; };
+
+/* ---------- Drawings: two solid-figure panels, start (1) and finish (2), used when there is no good video ---------- */
+const PICTO = (() => {
+  const K = "currentColor";
+  const L = (a, b, w) => `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${K}" stroke-width="${w}" stroke-linecap="round"/>`;
+  const fig = p => L(p.hip, p.kn, 8) + L(p.kn, p.an, 7) + L(p.an, [p.an[0] + 6, p.an[1]], 5) + L(p.sh, p.hip, 11)
+    + L(p.sh, p.el, 6.5) + L(p.el, p.ha, 6) + `<circle cx="${p.head[0]}" cy="${p.head[1]}" r="6.4" fill="${K}"/>`;
+  const leg = (hip, kn, an, toe = 6) => L(hip, kn, 8) + L(kn, an, 7) + L(an, [an[0] + toe, an[1]], 5);
+  const kb = (x, y) => `<circle cx="${x}" cy="${y + 2}" r="5.2" fill="${K}"/><path d="M${x - 3.2} ${y - 1.5} Q${x} ${y - 7.5} ${x + 3.2} ${y - 1.5}" stroke="${K}" stroke-width="1.8" fill="none"/>`;
+  const dbV = (x, y) => `<rect x="${x - 2.6}" y="${y - 6}" width="5.2" height="12" rx="1.5" fill="${K}"/>`;
+  const dbH = (x, y) => `<rect x="${x - 7}" y="${y - 2.8}" width="14" height="5.6" rx="1.5" fill="${K}"/>`;
+  const floor = `<line x1="2" y1="97.5" x2="128" y2="97.5" stroke="${K}" stroke-width="1.2" opacity=".5"/>`;
+  const bench = dx => `<rect x="${dx + 2}" y="79" width="42" height="5" rx="1" fill="${K}"/>` + L([dx + 8, 84], [dx + 8, 97], 2.4) + L([dx + 38, 84], [dx + 38, 97], 2.4);
+  const incl = () => L([6, 60], [38, 79], 5) + `<rect x="34" y="77" width="16" height="5" rx="1" fill="${K}"/>` + L([20, 72], [20, 97], 2.4) + L([44, 82], [44, 97], 2.4);
+  const box = (x, w, h) => `<rect x="${x}" y="${97 - h}" width="${w}" height="${h}" rx="1" fill="${K}" opacity=".9"/>`;
+  const bar = L([6, 6], [56, 6], 2.6);
+  const hang = inner => `<g transform="translate(3 10) scale(0.9)">${inner}</g>`;
+  const stand = {head: [30, 12], sh: [30, 25], hip: [30, 54], kn: [31, 75], an: [30, 94]};
+  const two = (a, b, ground = true) => `<svg viewBox="0 0 130 100" role="img" aria-label="Start and finish positions">
+    ${ground ? floor : ""}<g>${a}</g><g transform="translate(70 0)">${b}</g>
+    <path d="M61 50 L69 50 M65.5 46.5 L69 50 L65.5 53.5" stroke="${K}" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".6"/></svg>`;
+  return {
+    squat: two(fig({...stand, el: [37, 40], ha: [37, 31]}) + kb(39, 32),
+      fig({head: [31, 31], sh: [28, 44], hip: [18, 70], kn: [40, 75], an: [30, 94], el: [37, 57], ha: [38, 48]}) + kb(40, 49)),
+    pullup: two(hang(bar + fig({head: [38, 3], sh: [30, 15], hip: [30, 44], kn: [33, 62], an: [28, 77], el: [21, 18], ha: [29, 7]})),
+      hang(bar + fig({head: [38, 23], sh: [30, 32], hip: [30, 61], kn: [33, 79], an: [28, 94], el: [30, 20], ha: [30, 7]})), false),
+    bench: two(bench(0) + fig({head: [8, 70], sh: [16, 74], hip: [37, 74], kn: [53, 70], an: [52, 94], el: [7, 82], ha: [15, 64]}) + dbH(15, 62),
+      bench(0) + fig({head: [8, 70], sh: [16, 74], hip: [37, 74], kn: [53, 70], an: [52, 94], el: [16, 60], ha: [16, 47]}) + dbH(16, 45)),
+    incline: two(incl() + fig({head: [8, 55], sh: [15, 63], hip: [38, 76], kn: [54, 72], an: [53, 94], el: [7, 74], ha: [16, 56]}) + dbH(16, 54),
+      incl() + fig({head: [8, 55], sh: [15, 63], hip: [38, 76], kn: [54, 72], an: [53, 94], el: [20, 49], ha: [24, 37]}) + dbH(24, 35)),
+    rdl: two(fig({...stand, el: [33, 40], ha: [37, 54]}) + dbV(37, 58),
+      fig({head: [53, 37], sh: [45, 42], hip: [20, 56], kn: [32, 76], an: [30, 94], el: [45, 56], ha: [45, 68]}) + dbV(45, 72)),
+    "kb-deadlift": two(fig({head: [50, 45], sh: [43, 50], hip: [18, 62], kn: [35, 76], an: [30, 94], el: [42, 66], ha: [40, 82]}) + kb(40, 87),
+      fig({...stand, el: [33, 40], ha: [37, 55]}) + kb(38, 59)),
+    swing: two(fig({head: [51, 39], sh: [43, 44], hip: [16, 60], kn: [34, 76], an: [30, 94], el: [36, 58], ha: [28, 68]}) + kb(25, 72),
+      fig({...stand, el: [41, 26], ha: [51, 27]}) + kb(56, 27)),
+    row: two(box(46, 14, 22) + L([44, 48], [52, 74], 6) + fig({head: [50, 41], sh: [42, 46], hip: [16, 52], kn: [14, 74], an: [10, 94], el: [36, 64], ha: [35, 78]}) + dbH(35, 81),
+      box(46, 14, 22) + L([44, 48], [52, 74], 6) + fig({head: [50, 41], sh: [42, 46], hip: [16, 52], kn: [14, 74], an: [10, 94], el: [30, 34], ha: [35, 50]}) + dbH(35, 53)),
+    "split-squat": two(leg([28, 54], [20, 74], [12, 94], -2) + fig({head: [30, 12], sh: [30, 25], hip: [28, 54], kn: [38, 74], an: [42, 94], el: [30, 40], ha: [30, 54]}) + dbV(30, 58),
+      leg([28, 64], [20, 90], [8, 93], -2) + fig({head: [29, 22], sh: [29, 35], hip: [28, 64], kn: [45, 70], an: [44, 94], el: [29, 50], ha: [29, 63]}) + dbV(29, 67)),
+    carry: two(fig({...stand, el: [33, 40], ha: [37, 55]}) + dbV(37, 60),
+      leg([30, 54], [24, 74], [16, 93]) + fig({...stand, kn: [38, 73], an: [42, 94], el: [33, 40], ha: [37, 55]}) + dbV(37, 60)
+      + L([8, 36], [16, 36], 1.5) + L([6, 46], [14, 46], 1.5) + L([8, 56], [16, 56], 1.5)),
+  };
+})();
+
+/* ---------- Demo media: video, backup video, photo, drawing, in that order ---------- */
+function clipOf(v) {
+  const start = Math.max(0, +v.start || 0);
+  const end = Math.min(v.end ? +v.end : Infinity, start + MAX_CLIP);
+  return {kind: "yt", id: v.youtube_id, src: v.src || "YouTube", start, end};
+}
+function sources(ex) {
+  const tv = (ex.video && ex.video.tv) || {}, out = [];
+  if (tv.youtube_id && tv.status !== "bad") out.push({...clipOf(tv), label: "Demo"});
+  if (tv.backup && tv.backup.youtube_id && tv.backup.status !== "bad") out.push({...clipOf(tv.backup), label: out.length ? "Backup" : "Demo"});
+  if (tv.image) out.push({kind: "img", src: tv.image, label: "Photo"});
+  if (tv.pictogram && PICTO[tv.pictogram]) out.push({kind: "pic", name: tv.pictogram, label: "Drawing"});
+  if (!out.length) out.push({kind: "none", label: "Steps"});
+  return out;
+}
+
+let ytReady = null, player = null;
+function loadYT() {
+  if (ytReady) return ytReady;
+  ytReady = new Promise((res, rej) => {
+    if (window.YT && YT.Player) return res(YT);
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev && prev(); res(YT); };
+    const s = document.createElement("script");
+    s.src = "https://www.youtube.com/iframe_api"; s.onerror = () => rej(new Error("YouTube blocked"));
+    document.head.appendChild(s);
+    setTimeout(() => rej(new Error("YouTube slow")), 9000);
+  });
+  return ytReady;
+}
+const clipLabel = c => `${mmss(c.start * 1000)}–${isFinite(c.end) ? mmss(c.end * 1000) : "end"}`;
+function mountMedia(box, ex, n, onFail) {
+  const list = sources(ex), m = list[Math.min(n, list.length - 1)];
+  if (player && player.destroy) { try { player.destroy(); } catch (e) {} } player = null;
+  if (m.kind === "img") { box.innerHTML = `<img src="${esc(m.src)}" alt="${esc(ex.name)}: how it looks">`; return m; }
+  if (m.kind === "pic") { box.innerHTML = `<div class="pic">${PICTO[m.name]}<p>1 Start&ensp;→&ensp;2 Finish</p></div>`; return m; }
+  if (m.kind === "none") { box.innerHTML = `<div class="none"><b>No demo yet</b><span>Follow the steps on the right.</span></div>`; return m; }
+  box.innerHTML = `<div></div>`;
+  const host = box.firstChild;
+  // Muted autoplay is the only autoplay iOS allows; tap the player for sound. The clip loops between start and end.
+  const plain = () => {
+    const end = isFinite(m.end) ? `&end=${Math.round(m.end)}` : "";
+    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(m.id)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&start=${Math.round(m.start)}${end}&loop=1&playlist=${encodeURIComponent(m.id)}" title="${esc(ex.name)} demo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  };
+  loadYT().then(YT => {
+    if (!host.isConnected) return;
+    const vars = {autoplay: 1, mute: 1, playsinline: 1, rel: 0, modestbranding: 1, start: Math.round(m.start)};
+    if (isFinite(m.end)) vars.end = Math.round(m.end);
+    player = new YT.Player(host, {host: "https://www.youtube-nocookie.com", videoId: m.id, playerVars: vars, events: {
+      onReady: e => { e.target.mute(); e.target.playVideo(); },
+      onStateChange: e => { if (e.data === YT.PlayerState.ENDED) e.target.loadVideoById({videoId: m.id, startSeconds: m.start, endSeconds: isFinite(m.end) ? m.end : undefined}); },
+      onError: () => onFail(),
+    }});
+  }).catch(() => { if (host.isConnected) plain(); });
+  return m;
+}
+
+/* ---------- Workout state ---------- */
+let day = null, i = 0, slides = [];
+let session = null; // {day, i, sets: {slide: n}, warm: {item: true}, media: {exerciseId: n}, started}
 
 function buildSlides(key) {
-  const d = DATA.plan.days[key];
-  const list = [];
-  if (d.warmup && d.warmup.length) list.push({kind: "warmup", d});
+  const d = DATA.plan.days[key], list = [];
+  if (d.warmup && d.warmup.length) list.push({kind: "warmup", d, short: "Warm"});
+  // Blocks: a superset pair or a single exercise. Letters follow the printed sheet: A1, A2, B1, B2, C.
+  const blocks = [];
   d.exercises.forEach((e, n) => {
-    const partners = e.pair ? d.exercises.filter(o => o !== e && o.pair === e.pair) : [];
-    const slot = e.pair ? e.pair + (d.exercises.filter(o => o.pair === e.pair).indexOf(e) + 1) : null;
-    list.push({kind: "ex", e, n, ex: DATA.exercises[e.id] || {name: e.id}, partners, slot});
+    const b = e.pair && blocks.find(b => b.pair === e.pair);
+    if (b) b.items.push({e, n}); else blocks.push({pair: e.pair || null, items: [{e, n}]});
   });
-  if (d.finisher && d.finisher.text) list.push({kind: "finisher", d});
+  blocks.forEach((b, bn) => {
+    const letter = String.fromCharCode(65 + bn), idx = [];
+    b.items.forEach(({e, n}, k) => {
+      const slot = b.items.length > 1 ? letter + (k + 1) : letter;
+      idx.push(list.length);
+      list.push({kind: "ex", e, n, ex: DATA.exercises[e.id] || {name: e.id}, slot, short: slot, group: idx});
+    });
+  });
+  if (d.finisher && d.finisher.text) list.push({kind: "finisher", d, short: "Finish"});
+  list.push({kind: "done", d, short: "Done"});
   return list;
 }
 
-function video(ex) {
-  const id = ex.video && ex.video.tv && ex.video.tv.youtube_id;
-  if (!id) return `<div class="none"><b>Video coming soon</b><span>Follow the steps on the right.</span></div>`;
-  // Muted autoplay is the only autoplay iOS allows; tap the player for sound.
-  const src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${encodeURIComponent(id)}`;
-  return `<iframe src="${src}" title="${esc(ex.name)} demo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+const save = () => { if (session) { session.i = i; store.set("session", session); } };
+
+function start(key, resume) {
+  day = key; slides = buildSlides(key);
+  const old = store.get("session", null);
+  session = resume && old && old.day === key ? old : {day: key, i: 0, sets: {}, warm: {}, media: {}, started: Date.now()};
+  i = Math.min(session.i || 0, slides.length - 1);
+  save(); keepAwake(); render();
+}
+function goTo(n) {
+  closeRest();
+  n = Math.max(0, Math.min(slides.length - 1, n));
+  if (n === i) { updateTrack(); return; }
+  i = n; save(); render();
+}
+function go(g) {
+  if (g === "home") { closeRest(); day = null; render(); return; }
+  if (g === "finish") { store.set("last", {day, at: Date.now()}); store.del("session"); session = null; closeRest(); day = null; render(); return; }
+  goTo(i + Number(g));
+}
+
+/* ---------- Sets and rest ---------- */
+function setsDone(n) { return (session.sets[n] || 0); }
+function setDone() {
+  const s = slides[i];
+  if (!s || s.kind !== "ex") return;
+  const total = s.e.sets || 1;
+  if (setsDone(i) >= total && blockDone(s)) { goTo(s.group[s.group.length - 1] + 1); return; }
+  session.sets[i] = Math.min(total, setsDone(i) + 1); save(); updateTrack();
+  const pos = s.group.indexOf(i);
+  if (pos < s.group.length - 1) {
+    // Superset: straight to the partner, no rest.
+    const nx = slides[s.group[pos + 1]];
+    toast(`Now ${nx.slot}: ${nx.ex.name}`);
+    goTo(s.group[pos + 1]);
+    return;
+  }
+  const first = s.group[0], left = (slides[first].e.sets || 1) - setsDone(first);
+  const target = left > 0 ? first : s.group[s.group.length - 1] + 1;
+  const nx = slides[target];
+  const label = left > 0 ? `${nx.slot} ${esc(nx.ex.name)} · set ${setsDone(first) + 1} of ${nx.e.sets}`
+    : nx.kind === "ex" ? `${nx.slot} ${esc(nx.ex.name)}` : nx.kind === "finisher" ? "Finisher" : "Wrap up";
+  openRest(s.e.rest || 60, label, () => goTo(target));
+}
+const blockDone = s => s.group.every(n => setsDone(n) >= (slides[n].e.sets || 1));
+
+let restTimer = null;
+function openRest(seconds, nextLabel, then) {
+  closeRest();
+  restEl.innerHTML = `<div class="card">
+      <span class="label">Rest</span>
+      <span class="big digits" id="rest-t">${mmss(seconds * 1000)}</span>
+      <div class="meter"><i id="rest-m"></i></div>
+      <p class="nextup">Up next: <b>${nextLabel}</b></p>
+      <div class="row">
+        <button class="btn" data-r="-15">−15 s</button><button class="btn" data-r="15">+15 s</button>
+        <button class="btn primary" data-r="skip">Go now${ICON.right}</button>
+      </div></div>`;
+  restEl.classList.add("on");
+  const t = document.getElementById("rest-t"), m = document.getElementById("rest-m");
+  restTimer = new Countdown(seconds, c => { t.textContent = mmss(c.remaining()); m.style.width = `${(1 - c.remaining() / c.total) * 100}%`; }, then);
+  restEl.querySelectorAll("button").forEach(b => b.onclick = () => b.dataset.r === "skip" ? then() : restTimer.add(+b.dataset.r));
+  restTimer.start();
+}
+function closeRest() { if (restTimer) restTimer.kill(); restTimer = null; restEl.classList.remove("on"); restEl.innerHTML = ""; }
+
+let toastT;
+function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("on"); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove("on"), 1800); }
+
+/* ---------- Slides ---------- */
+function trackHTML(s) {
+  const total = s.e.sets || 1, done = setsDone(i);
+  const dots = Array.from({length: total}, (_, k) => `<button class="${k < done ? "on" : ""}" data-dot="${k}" aria-label="Set ${k + 1}">${k + 1}</button>`).join("");
+  const pos = s.group.indexOf(i), partner = pos < s.group.length - 1 ? slides[s.group[pos + 1]] : null;
+  let what, sub, btn;
+  if (done >= total && blockDone(s)) { what = "All sets done"; sub = "Move on when you're ready"; btn = `Next${ICON.right}`; }
+  else if (done >= total) { what = "Sets done here"; sub = "Finish the other half of the superset"; btn = `Set done${ICON.check}`; }
+  else {
+    what = `Set ${done + 1} of ${total}`;
+    sub = partner ? `Then straight to ${partner.slot}, no rest` : `Then rest ${s.e.rest || 60} s`;
+    btn = `Set done${ICON.check}`;
+  }
+  return `<div class="what" title="${sub}"><b>${what}</b><div class="dots">${dots}</div></div><button class="btn primary" data-set>${btn}</button>`;
+}
+function updateTrack() {
+  const el = app.querySelector(".track");
+  if (!el) return;
+  el.innerHTML = trackHTML(slides[i]);
+  el.querySelector("[data-set]").onclick = setDone;
+  el.querySelectorAll("[data-dot]").forEach(b => b.onclick = () => {
+    const k = +b.dataset.dot; session.sets[i] = setsDone(i) === k + 1 ? k : k + 1; save(); updateTrack(); markSteps();
+  });
+  markSteps();
 }
 
 function exerciseHTML(s) {
-  const {e, ex, partners, slot} = s;
+  const {e, ex} = s;
   const cues = ex.cues || [];
-  const parts = String(ex.setup || "").split(/\s*·\s*/).filter(Boolean).map(p => p[0].toUpperCase() + p.slice(1));
+  const parts = String(ex.setup || "").split(/\s*·\s*/).filter(Boolean).map(cap);
   const setup = parts.length ? `<div class="setup"><span class="label">Setup</span><ul>${parts.map(p => `<li>${esc(p)}</li>`).join("")}</ul></div>` : "";
   const avoid = ex.x ? `<div class="avoid"><span class="label">Watch for</span>${esc(ex.x)}</div>` : "";
-  const steps = cues.length ? `<div><span class="label">How to</span><ol class="steps">${cues.map(c => `<li><span>${esc(c)}</span></li>`).join("")}</ol></div>` : "";
+  const how = cues.length ? `<div><span class="label">How to</span><ol class="how">${cues.map(c => `<li><span>${esc(c)}</span></li>`).join("")}</ol></div>` : "";
   const dose = [
     e.sets ? `<div><span class="num">${e.sets}</span><span class="label">sets</span></div>` : "",
     e.reps !== undefined ? `<div><span class="num">${esc(range(e.reps))}</span><span class="label">${unit(ex)}</span></div>` : "",
     e.rest ? `<div><span class="num">${rest(e.rest)}</span><span class="label">rest</span></div>` : "",
   ].join("");
-  const extra = e.extra ? `<p class="note"><span class="tag">Tip</span><span>${esc(e.extra[0].toUpperCase() + e.extra.slice(1))}</span></p>` : "";
+  const partners = s.group.filter(n => n !== i).map(n => slides[n]);
+  const tip = e.extra ? `<p class="note"><span class="tag">Tip</span><span>${esc(cap(e.extra))}</span></p>` : "";
   const pair = partners.length
-    ? `<p class="note"><span class="tag">${esc(slot)}</span><span>Superset: one set of this, then <b>${partners.map(p => esc(nameOf(p.id))).join("</b>, then <b>")}</b>. Then rest.</span></p>` : "";
-  const credit = ex.video && ex.video.tv ? `<p class="credit">Demo: ${esc(ex.video.tv.src || "YouTube")}. Tap the video for sound.</p>` : "";
+    ? `<p class="note"><span class="tag">Superset</span><span>One set of this, then <b>${partners.map(p => `${p.slot} ${esc(p.ex.name)}`).join("</b>, then <b>")}</b>. ${partners.length > 1 ? "Rest after the round" : "Rest after the pair"}.</span></p>` : "";
+  const list = sources(ex), cur = Math.min(session.media[e.id] || 0, list.length - 1);
+  const seg = list.length > 1 ? `<div class="seg" role="group" aria-label="Demo type">${list.map((m, k) => `<button data-media="${k}" aria-pressed="${k === cur}">${m.label}</button>`).join("")}</div>` : "";
   return `<section class="ex">
-    <div class="media">
-      <div class="video">${video(ex)}</div>
-      ${credit}
-      ${dose ? `<div class="dose">${dose}</div>` : ""}
-      ${extra}${pair}
-    </div>
+    <div class="stage"><div class="video" id="media"></div><div class="mbar"><span class="credit" id="credit"></span>${seg}</div>
+      ${tip || pair ? `<div class="notes">${pair}${tip}</div>` : ""}</div>
+    ${dose ? `<div class="dose">${dose}</div>` : ""}
+    <div class="track">${trackHTML(s)}</div>
     <div class="teach fit" data-base="2.4">
-      <h1>${esc(ex.name)}</h1>
-      ${setup}${steps}${avoid}
-      <p class="remind">Breathe out on the hard part. Stop each set with 1–2 reps left.</p>
+      <h1><span class="slot">${esc(s.slot)}</span><span>${esc(ex.name)}</span></h1>
+      ${setup}${how}${avoid}
     </div></section>`;
+}
+function showMedia(n) {
+  const s = slides[i], box = document.getElementById("media");
+  if (!box) return;
+  const list = sources(s.ex);
+  n = Math.min(n, list.length - 1);
+  session.media[s.e.id] = n; save();
+  app.querySelectorAll("[data-media]").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.media === n)));
+  const m = mountMedia(box, s.ex, n, () => { if (n + 1 < list.length) { toast("That video won't play here. Switching."); showMedia(n + 1); } });
+  const credit = document.getElementById("credit");
+  credit.textContent = m.kind === "yt" ? `${m.src} · clip ${clipLabel(m)}`
+    : m.kind === "pic" ? "Drawing: start, then finish" : m.kind === "img" ? "Photo" : "";
+}
+
+// Warm-up: tick moves off; anything with a time ("3 min", "20 s") gets its own timer.
+const secondsIn = t => { const m = /(\d+)\s*(min|minutes?|s|sec|seconds?)\b/i.exec(t); return m ? +m[1] * (/^m/i.test(m[2]) ? 60 : 1) : 0; };
+function warmupHTML(s) {
+  const items = s.d.warmup, rows = items.length > 6 ? Math.ceil(items.length / 2) : items.length;
+  const done = items.filter((_, k) => session.warm[k]).length;
+  return `<section class="timed"><div class="fit" data-base="2.5">
+      <div class="rotate">Turn your phone sideways for the TV.</div>
+      <span class="label">Warm-up · ${done} of ${items.length} done</span>
+      <h1>Get warm: about ${s.d.warmup_min || 8} minutes</h1>
+      <ol class="checks" style="--rows:${rows}">${items.map((w, k) => {
+        const sec = secondsIn(w);
+        return `<li><button data-w="${k}" class="${session.warm[k] ? "done" : ""}"><span class="box">${ICON.check}</span><span class="t">${esc(w)}</span>${sec ? `<span class="chip" id="chip${k}">${ICON.play}${mmss(sec * 1000)}</span>` : ""}</button></li>`;
+      }).join("")}</ol>
+      <p class="sub">Tap a move when it's done. Tap a timed move to start its timer. Easy pace: loose, not tired.</p></div>
+    <div class="clock fit" id="clock" data-base="1"><span class="label" id="c-l">Warm-up clock</span><span class="big digits" id="c-t">0:00</span>
+      <span class="name" id="c-n">&nbsp;</span><div class="meter"><i id="c-m"></i></div><span class="of" id="c-o">Target ${s.d.warmup_min || 8}:00</span></div></section>`;
+}
+function wireWarmup(s) {
+  const t0 = Date.now(), target = (s.d.warmup_min || 8) * 60000;
+  let active = null, activeK = -1;
+  const T = id => document.getElementById(id);
+  const idle = setInterval(() => {
+    if (active) return;
+    const el = Date.now() - t0;
+    T("c-t").textContent = mmss(el); T("c-m").style.width = `${Math.min(100, el / target * 100)}%`;
+  }, 250);
+  slideTimers.push({kill: () => clearInterval(idle)});
+  const mark = (k, on) => {
+    session.warm[k] = on; save();
+    app.querySelector(`[data-w="${k}"]`).classList.toggle("done", on);
+    const n = s.d.warmup.filter((_, j) => session.warm[j]).length;
+    app.querySelector(".timed .label").textContent = `Warm-up · ${n} of ${s.d.warmup.length} done`;
+  };
+  app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+    const k = +b.dataset.w, sec = secondsIn(s.d.warmup[k]);
+    if (sec && !session.warm[k]) {
+      if (activeK === k) { active.toggle(); return; }
+      if (active) { active.kill(); app.querySelector(`[data-w="${activeK}"]`).classList.remove("run"); }
+      activeK = k; b.classList.add("run");
+      T("c-l").textContent = "Now"; T("c-n").textContent = s.d.warmup[k];
+      active = new Countdown(sec, c => {
+        const r = mmss(c.remaining());
+        T("c-t").textContent = r; T("c-m").style.width = `${(1 - c.remaining() / c.total) * 100}%`;
+        T("c-o").textContent = c.running ? "Tap the move to pause" : "Paused · tap the move to go on";
+        const chip = T("chip" + k); if (chip) chip.innerHTML = (c.running ? ICON.pause : ICON.play) + r;
+      }, () => {
+        mark(k, true); b.classList.remove("run"); active = null; activeK = -1;
+        T("c-l").textContent = "Warm-up clock"; T("c-n").innerHTML = "&nbsp;"; T("c-o").textContent = `Target ${s.d.warmup_min || 8}:00`;
+      });
+      slideTimers.push(active);
+      active.start();
+      return;
+    }
+    mark(k, !session.warm[k]);
+  });
+}
+
+// Finisher: "6 × (30 s strong / 30 s easy)" becomes an interval timer; "10 min" becomes a countdown.
+function finisherPhases(text) {
+  const iv = /(\d+)\s*[×x]\s*\(\s*(\d+)\s*s(?:ec)?\s*([^/]*?)\s*\/\s*(\d+)\s*s(?:ec)?\s*([^)]*?)\s*\)/i.exec(text);
+  if (iv) {
+    const out = [];
+    for (let r = 1; r <= +iv[1]; r++) {
+      out.push({s: +iv[2], name: iv[3] || "Work", hot: true, round: r, of: +iv[1]});
+      out.push({s: +iv[4], name: iv[5] || "Easy", hot: false, round: r, of: +iv[1]});
+    }
+    return out;
+  }
+  const sec = secondsIn(text);
+  return sec ? [{s: sec, name: "Steady", hot: false, round: 1, of: 1}] : [];
+}
+function finisherHTML(s) {
+  const ph = finisherPhases(s.d.finisher.text);
+  const clock = ph.length ? `<div class="clock fit" id="clock" data-base="1"><span class="label" id="c-l">${ph[0].of > 1 ? `Round 1 of ${ph[0].of}` : "Finisher"}</span>
+      <span class="big digits" id="c-t">${mmss(ph[0].s * 1000)}</span><span class="name" id="c-n">${esc(ph[0].name)}</span>
+      <div class="meter"><i id="c-m"></i></div><span class="of" id="c-o">Total ${mmss(ph.reduce((a, p) => a + p.s, 0) * 1000)}</span>
+      <div class="row"><button class="btn primary" id="c-go">${ICON.play}Start</button><button class="btn" id="c-re">Reset</button></div></div>` : "";
+  return `<section class="timed"${ph.length ? "" : ' style="grid-template-columns:1fr"'}><div class="fit" data-base="2.5">
+    <span class="label">Finisher</span>
+    <h1>${esc(s.d.finisher.text)}</h1>
+    ${s.d.finisher.detail ? `<p class="sub">${esc(cap(s.d.finisher.detail))}</p>` : ""}
+    <p class="sub">The timer beeps 3, 2, 1 before each change.</p></div>${clock}</section>`;
+}
+function wireFinisher(s) {
+  const ph = finisherPhases(s.d.finisher.text);
+  if (!ph.length) return;
+  const T = id => document.getElementById(id);
+  let k = 0, cd = null;
+  const paint = c => {
+    const p = ph[k];
+    T("clock").classList.toggle("hot", p.hot && c.running);
+    T("c-l").textContent = p.of > 1 ? `Round ${p.round} of ${p.of}` : "Finisher";
+    T("c-n").textContent = p.name; T("c-t").textContent = mmss(c.remaining());
+    T("c-m").style.width = `${(1 - c.remaining() / c.total) * 100}%`;
+    T("c-go").innerHTML = c.running ? `${ICON.pause}Pause` : `${ICON.play}${k || c.remaining() < c.total ? "Resume" : "Start"}`;
+  };
+  const load = (n, run) => {
+    if (cd) cd.kill();
+    k = n;
+    cd = new Countdown(ph[k].s, paint, () => {
+      if (k + 1 < ph.length) load(k + 1, true);
+      else { T("c-l").textContent = "Done"; T("c-n").textContent = "Nice work"; T("clock").classList.remove("hot"); T("c-go").innerHTML = `${ICON.check}Done`; }
+    });
+    slideTimers.push(cd);
+    run ? cd.start() : paint(cd);
+  };
+  load(0, false);
+  T("c-go").onclick = () => cd.toggle();
+  T("c-re").onclick = () => load(0, false);
+  slideTimers.push({kill: () => {}, toggle: () => cd.toggle()});
+}
+
+function doneHTML(s) {
+  const exs = slides.filter(x => x.kind === "ex");
+  const sets = exs.reduce((a, x) => a + Math.min(x.e.sets || 1, setsDone(slides.indexOf(x))), 0), planned = exs.reduce((a, x) => a + (x.e.sets || 1), 0);
+  const mins = Math.round((Date.now() - session.started) / 60000);
+  return `<section class="timed" style="grid-template-columns:1fr"><div class="fit" data-base="2.5">
+    <span class="label">${esc(s.d.title)}</span>
+    <h1>Workout done. Nice work.</h1>
+    <div class="stats"><div><span class="digits">${mins}</span><span class="label">minutes</span></div>
+      <div><span class="digits">${sets}/${planned}</span><span class="label">sets ticked</span></div>
+      <div><span class="digits">${exs.length}</span><span class="label">exercises</span></div></div>
+    <p class="sub">Now write your weights and reps on today's sheet, and take a photo of it when you're done for the week.</p></div></section>`;
 }
 
 function slideHTML(s) {
-  if (s.kind === "ex") return exerciseHTML(s);
-  if (s.kind === "warmup") {
-    const items = s.d.warmup;
-    const rows = items.length > 6 ? Math.ceil(items.length / 2) : items.length;
-    return `<section class="list"><div class="fit" data-base="2.6">
-      <div class="rotate">Turn your phone sideways for the TV.</div>
-      <span class="label">Warm-up first</span>
-      <h1>Get warm: about ${s.d.warmup_min || 8} minutes</h1>
-      <ol style="--rows:${rows}">${items.map(w => `<li>${esc(w)}</li>`).join("")}</ol>
-      <p class="sub">Easy pace. You should feel loose, not tired.</p></div></section>`;
-  }
-  return `<section class="list"><div class="fit" data-base="2.6">
-    <span class="label">Finisher</span>
-    <h1>${esc(s.d.finisher.text)}</h1>
-    ${s.d.finisher.detail ? `<p class="sub">${esc(s.d.finisher.detail)}</p>` : ""}
-    <p class="sub">Then write your numbers on today's sheet. Nice work.</p></div></section>`;
+  return s.kind === "ex" ? exerciseHTML(s) : s.kind === "warmup" ? warmupHTML(s) : s.kind === "finisher" ? finisherHTML(s) : doneHTML(s);
 }
 
 function homeHTML() {
-  const days = Object.entries(DATA.plan.days);
+  const days = Object.entries(DATA.plan.days), keys = days.map(([k]) => k);
+  const last = store.get("last", null), old = store.get("session", null);
+  const upNext = last && keys.includes(last.day) ? keys[(keys.indexOf(last.day) + 1) % keys.length] : keys[0];
+  const ago = t => { const d = Math.round((Date.now() - t) / 86400000); return d <= 0 ? "today" : d === 1 ? "yesterday" : `${d} days ago`; };
+  const fresh = old && DATA.plan.days[old.day] && Date.now() - old.started < 5 * 3600000;
+  const resume = fresh ? (() => {
+    const sl = buildSlides(old.day)[Math.min(old.i || 0, buildSlides(old.day).length - 1)];
+    const at = sl.kind === "ex" ? `${sl.slot} ${sl.ex.name}` : sl.kind === "warmup" ? "the warm-up" : sl.kind === "finisher" ? "the finisher" : "the end";
+    return `<div class="resume"><p><span class="label">Workout in progress</span><b>${esc(DATA.plan.days[old.day].title)}, at ${esc(at)}</b></p>
+      <button class="btn primary" data-resume="${esc(old.day)}">Pick up${ICON.right}</button></div>`;
+  })() : "";
   return `<main><section class="home fit" data-base="2">
     <div class="rotate">Turn your phone sideways for the TV.</div>
-    <span class="label">Week ${esc(DATA.plan.week)} · ${esc(DATA.plan.plan)}</span>
+    <div class="brand"><span class="mark">${ICON.bell}</span><span class="label">Workout TV · Week ${esc(DATA.plan.week)} · ${esc(DATA.plan.plan)}</span></div>
     <h1>Which workout today?</h1>
-    <div class="days">${days.map(([k, d]) => `<button class="day" data-day="${esc(k)}">
-      <b>${esc(d.title)}</b>
-      <ol>${d.exercises.map(e => `<li>${esc(nameOf(e.id))}</li>`).join("")}</ol>
-      <span class="meta">${d.exercises.length} exercise${d.exercises.length === 1 ? "" : "s"}${d.minutes ? ` · about ${d.minutes} min` : ""}</span></button>`).join("")}</div>
-    <p class="hint">Tap Next and Back to move. On a keyboard, the arrow keys work too.</p></section></main>`;
+    ${resume}
+    <div class="days">${days.map(([k, d]) => {
+      const sl = buildSlides(k).filter(x => x.kind === "ex");
+      const sets = d.exercises.reduce((a, e) => a + (e.sets || 0), 0);
+      return `<button class="day${k === upNext && !fresh ? " up" : ""}" data-day="${esc(k)}">
+        <span class="top">${k === upNext ? '<span class="pill">Up next</span>' : "<span></span>"}${last && last.day === k ? `<span class="last">Last done ${ago(last.at)}</span>` : ""}</span>
+        <b>${esc(d.title)}</b>
+        <ol>${sl.map(x => `<li><span class="k">${esc(x.slot)}</span><span>${esc(x.ex.name)}</span><span class="d">${x.e.sets ? `${x.e.sets} × ${esc(range(x.e.reps))}` : ""}</span></li>`).join("")}</ol>
+        <span class="meta"><span><b>${d.minutes ? `~${d.minutes}` : "–"}</b> min</span><span><b>${sl.length}</b> exercises</span><span><b>${sets}</b> sets</span></span></button>`;
+    }).join("")}</div>
+    <p class="hint">Tap a workout to start. Swipe or use Next and Back to move. After each set, tap Set done and the rest timer starts. Tap a video for sound.</p></section></main>`;
 }
 
+const ICON_SOUND = () => soundOn ? ICON.sound : ICON.mute;
 function render() {
+  killSlideTimers();
   if (!day) {
+    if (player && player.destroy) { try { player.destroy(); } catch (e) {} player = null; }
     app.innerHTML = homeHTML();
-    app.querySelectorAll(".day").forEach(b => b.onclick = () => start(b.dataset.day));
+    app.querySelectorAll(".day").forEach(b => b.onclick = () => start(b.dataset.day, false));
+    app.querySelectorAll("[data-resume]").forEach(b => b.onclick = () => start(b.dataset.resume, true));
     return fitAll();
   }
   const s = slides[i], nxt = slides[i + 1];
   const exs = slides.filter(x => x.kind === "ex");
-  const where = s.kind === "ex" ? `Exercise <b>${s.n + 1}</b> of ${exs.length}` : s.kind === "warmup" ? "Warm-up" : "Finisher";
-  const nextLabel = !nxt ? "Finish" : nxt.kind === "ex" ? nxt.ex.name : "Finisher";
+  const where = s.kind === "ex" ? `Exercise ${exs.indexOf(s) + 1} of ${exs.length}` : s.kind === "warmup" ? "Warm-up" : s.kind === "finisher" ? "Finisher" : "Done";
+  const nextLabel = !nxt ? "" : nxt.kind === "ex" ? `${nxt.slot} ${nxt.ex.name}` : nxt.kind === "finisher" ? "Finisher" : "Wrap up";
+  const hint = s.kind === "ex" ? "Breathe out on the hard part · stop each set with 1–2 reps left" : s.kind === "warmup" ? "Space bar or tap: tick a move" : "";
   app.innerHTML = `<header>
-      <span class="label where"><b>${esc(DATA.plan.days[day].title)}</b></span>
-      <span class="count">${where}</span>
-      <div class="bar"><i style="width:${((i + 1) / slides.length) * 100}%"></i></div>
+      <span class="label where"><b>${esc(DATA.plan.days[day].title)}</b><span class="step">${where}</span></span>
+      <span class="tools"><span class="clockchip digits" title="Workout time">${ICON.clock}<span id="elapsed">${mmss(Date.now() - session.started)}</span></span>
+        <button class="iconbtn" id="snd" aria-label="Sound ${soundOn ? "on" : "off"}">${ICON_SOUND()}</button></span>
+      <div class="steps-bar">${slides.map((x, n) => `<button data-jump="${n}" aria-label="Go to ${esc(x.short)}"><i></i><span>${esc(x.short)}</span></button>`).join("")}</div>
     </header>
     <main>${slideHTML(s)}</main>
     <nav>
-      <button class="btn ghost" data-go="home" aria-label="All workouts">${GRID}Days</button>
-      <button class="btn" data-go="-1" ${i === 0 ? "disabled" : ""}>${ARROW_L}Back</button>
-      <button class="btn primary" data-go="1">${nxt ? `<small>Next</small><span>${esc(nextLabel)}</span>${ARROW_R}` : `<span>Done</span>${CHECK}`}</button>
+      <button class="btn ghost" data-go="home" aria-label="All workouts">${ICON.grid}Days</button>
+      <button class="btn" data-go="-1" ${i === 0 ? "disabled" : ""}>${ICON.left}Back</button>
+      <span class="hint">${hint}</span>
+      <button class="btn primary" data-go="${nxt ? 1 : "finish"}">${nxt ? `<small>Next</small><span>${esc(nextLabel)}</span>${ICON.right}` : `<span>Finish</span>${ICON.check}`}</button>
     </nav>`;
   app.querySelectorAll("nav button").forEach(b => b.onclick = () => go(b.dataset.go));
+  app.querySelectorAll("[data-jump]").forEach(b => b.onclick = () => goTo(+b.dataset.jump));
+  document.getElementById("snd").onclick = ev => { soundOn = !soundOn; store.set("sound", soundOn); ev.currentTarget.innerHTML = ICON_SOUND(); if (soundOn) { unlockAudio(); beep(); } };
+  markSteps();
+  if (s.kind === "ex") {
+    updateTrack();
+    app.querySelectorAll("[data-media]").forEach(b => b.onclick = () => showMedia(+b.dataset.media));
+    showMedia(session.media[s.e.id] || 0);
+  }
+  if (s.kind === "warmup") wireWarmup(s);
+  if (s.kind === "finisher") wireFinisher(s);
   fitAll();
 }
+function markSteps() {
+  app.querySelectorAll("[data-jump]").forEach(b => {
+    const n = +b.dataset.jump, x = slides[n];
+    const complete = x.kind === "ex" ? setsDone(n) >= (x.e.sets || 1) : n < i;
+    b.className = n === i ? "now" : complete ? "done" : "";
+  });
+}
+setInterval(() => { const el = document.getElementById("elapsed"); if (el && session) el.textContent = mmss(Date.now() - session.started); }, 1000);
 
 // Shrink a text block until it fits its box, so long names and instructions never spill off the TV.
+// If the coaching still doesn't fit, give it more of the screen and try again.
 function fitAll() {
+  const ex = app.querySelector(".ex");
+  if (ex) ex.classList.remove("tight");
+  fitBoxes();
+  const teach = app.querySelector(".teach");
+  if (ex && teach && teach.scrollHeight > teach.clientHeight + 1) { ex.classList.add("tight"); fitBoxes(); }
+}
+function fitBoxes() {
   if (matchMedia("(orientation: portrait)").matches) {
     app.querySelectorAll(".fit").forEach(el => el.style.fontSize = "");
     return;
@@ -329,23 +854,24 @@ function fitAll() {
   });
 }
 
-function start(key) { day = key; slides = buildSlides(key); i = 0; keepAwake(); render(); }
-function go(g) {
-  if (g === "home" || (g === "1" && i === slides.length - 1)) { day = null; render(); return; }
-  const to = Math.max(0, Math.min(slides.length - 1, i + Number(g)));
-  if (to !== i) { i = to; render(); }
-}
-
 document.addEventListener("keydown", ev => {
   if (!day) return;
+  if (restTimer && (ev.key === " " || ev.key === "Enter")) { ev.preventDefault(); restEl.querySelector('[data-r="skip"]').click(); return; }
   if (ev.key === "ArrowRight" || ev.key === "PageDown") go("1");
   if (ev.key === "ArrowLeft" || ev.key === "PageUp") go("-1");
-  if (ev.key === "Escape") go("home");
+  if (ev.key === "Escape") restTimer ? closeRest() : go("home");
+  if (ev.key === " ") {
+    ev.preventDefault();
+    const s = slides[i];
+    if (s.kind === "ex") setDone();
+    else if (s.kind === "finisher") { const c = document.getElementById("c-go"); c && c.click(); }
+    else if (s.kind === "warmup") { const b = [...app.querySelectorAll("[data-w]")].find(b => !b.classList.contains("done")); b && b.click(); }
+  }
 });
 let x0 = null, y0 = null;
 document.addEventListener("touchstart", ev => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; }, {passive: true});
 document.addEventListener("touchend", ev => {
-  if (!day || x0 === null) return;
+  if (!day || x0 === null || restTimer) return;
   const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0; x0 = null;
   if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? "1" : "-1");
 });

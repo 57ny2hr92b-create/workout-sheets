@@ -1,0 +1,27 @@
+# On every push and pull request: the site in docs/ must match library.json and plan.json,
+# the tools' tests must pass, and every slide must fit at TV, tablet and phone sizes.
+name: Check slideshow
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests
+        run: python3 -m unittest discover test
+      - name: docs/ is up to date
+        run: |
+          python3 scripts/build_site.py
+          git diff --exit-code -- docs || { echo "Run python3 scripts/build_site.py and commit docs/"; exit 1; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Screens fit
+        run: |
+          npm install --no-save playwright@1.48.2
+          npx playwright install --with-deps chromium
+          node scripts/check_tv.js docs/tv/index.html
