@@ -1,0 +1,31 @@
+# Every Sunday, check that each demo video still exists and can play on another site.
+# Broken ones get an issue (or a comment on the open one), so they're fixed before Monday's workout.
+name: Weekly video check
+on:
+  schedule:
+    - cron: "0 14 * * 0"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [library.json]
+permissions:
+  contents: read
+  issues: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check videos
+        id: check
+        run: python3 scripts/check_videos.py --report report.md
+        continue-on-error: true
+      - name: Open or update the issue
+        if: steps.check.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh issue list --state open --search "Broken exercise videos in:title" --json number --jq '.[0].number')
+          if [ -n "$n" ]; then gh issue comment "$n" --body-file report.md
+          else gh issue create --title "Broken exercise videos" --body-file report.md; fi
+          exit 1
