@@ -19,5 +19,6 @@ Settings → Pages → Deploy from a branch → `main`, folder `/docs`.
 
 - `plan.json` holds the strength days. Refresh it when the plan changes: `python3 scripts/export_plan.py /path/to/weekNN.json`, then `python3 scripts/build_site.py`. It keeps only titles, warm-ups, exercise order, sets, reps, rest and finisher; no loads or logs.
 - Each exercise's demo is `video.tv.youtube_id` in `library.json`. Swap an ID and rebuild to change a video.
+- Looks: add `?style=print` (light, like the paper sheets), `?style=cinema` (bigger video, slim sidebar) or `?style=scoreboard` (huge sets, reps and rest across the top) to the address. No style means the default dark look.
 - The page design is `scripts/tv.html`; the build bakes the data into `docs/tv/index.html`.
 - Long names and instructions shrink to fit their box instead of running off the screen. After changing the design or adding long text, run `node scripts/check_tv.js docs/tv/index.html` (needs Playwright). It clicks through every slide at TV, phone and tablet sizes and fails if anything spills. `test/tv_mock_*.json` is a deliberately extreme plan for stress-testing the design.

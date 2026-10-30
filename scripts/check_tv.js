@@ -6,7 +6,8 @@ const path = require("path");
 const SIZES = [["tv", 1920, 1080], ["phone", 844, 390], ["small-phone", 667, 375], ["ipad", 1180, 820], ["portrait", 390, 844]];
 
 (async () => {
-  const file = "file://" + path.resolve(process.argv[2]);
+  const [target, query = ""] = process.argv[2].split("?");
+  const file = "file://" + path.resolve(target) + (query ? "?" + query : "");
   const shots = process.argv[3];
   const browser = await chromium.launch();
   let problems = 0;
