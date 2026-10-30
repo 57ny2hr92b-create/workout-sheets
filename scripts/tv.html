@@ -122,50 +122,50 @@ svg.i { width: 1em; height: 1em; flex: none; }
 .avoid .label { color: var(--warn); }
 .remind { color: var(--ok); font-size: .74em; }
 
-/* ---------- Alternate looks: add ?style=print, ?style=cinema or ?style=scoreboard to the address ---------- */
+/* ---------- Looks: ?style= takes print (colours) and/or cinema or scoreboard (layout); the default is print + cinema ---------- */
 
 /* Print: light paper and black ink, like the printed sheets */
-body[data-style="print"] { --bg: #f6f4ef; --panel: #ffffff; --panel-2: #ece9e2; --line: #d8d4cb; --text: #141414; --muted: #615d56;
+body[data-style~="print"] { --bg: #f6f4ef; --panel: #ffffff; --panel-2: #ece9e2; --line: #d8d4cb; --text: #141414; --muted: #615d56;
   --accent: #141414; --accent-ink: #ffffff; --warn: #b4321f; --ok: #2f6b40; }
-body[data-style="print"] .video { border-color: #141414; }
-body[data-style="print"] .video .none { background: radial-gradient(circle at 50% 40%, #3a3a3a, #111 75%); }
-body[data-style="print"] .video .none b { color: #fff; }
-body[data-style="print"] .dose .num { color: var(--text); }
-body[data-style="print"] .avoid { background: #fff; border: 2px solid var(--warn); }
-body[data-style="print"] .teach h1, body[data-style="print"] .home h1 { text-transform: uppercase; letter-spacing: .01em; }
-body[data-style="print"] .teach h1 { border-bottom: 3px solid var(--text); padding-bottom: .12em; }
+body[data-style~="print"] .video { border-color: #141414; }
+body[data-style~="print"] .video .none { background: radial-gradient(circle at 50% 40%, #3a3a3a, #111 75%); }
+body[data-style~="print"] .video .none b { color: #fff; }
+body[data-style~="print"] .dose .num { color: var(--text); }
+body[data-style~="print"] .avoid { background: #fff; border: 2px solid var(--warn); }
+body[data-style~="print"] .teach h1, body[data-style~="print"] .home h1 { text-transform: uppercase; letter-spacing: .01em; }
+body[data-style~="print"] .teach h1 { border-bottom: 3px solid var(--text); padding-bottom: .12em; }
 
 /* Cinema: a big video takes most of the screen, coaching sits in a slim sidebar */
-body[data-style="cinema"] { --bg: #000; --panel: #121417; --line: #24282d; --accent: #4fe3c1; --accent-ink: #04201a; }
-body[data-style="cinema"] .ex { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: "video dose" "video teach" "video note1" "credit note2"; column-gap: calc(var(--u) * 2.4); row-gap: calc(var(--u) * 1.2); }
-body[data-style="cinema"] .media { display: contents; }
-body[data-style="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: calc(var(--radius) * 1.4); }
-body[data-style="cinema"] .credit { grid-area: credit; margin: 0; }
-body[data-style="cinema"] .dose { grid-area: dose; }
-body[data-style="cinema"] .dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.1); }
-body[data-style="cinema"] .dose .num { font-size: calc(var(--u) * 3); }
-body[data-style="cinema"] .note { grid-area: note1; font-size: calc(var(--u) * 1.5); }
-body[data-style="cinema"] .note + .note { grid-area: note2; }
-body[data-style="cinema"] .teach.fit { grid-area: teach; }
-body[data-style="cinema"] .teach h1 { font-size: 1.8em; }
+body[data-style~="cinema"]:not([data-style~="print"]) { --bg: #000; --panel: #121417; --line: #24282d; --accent: #4fe3c1; --accent-ink: #04201a; }
+body[data-style~="cinema"] .ex { grid-template-columns: minmax(0, 60fr) minmax(0, 40fr); grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  grid-template-areas: "video dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 2.4); row-gap: calc(var(--u) * 1.2); }
+body[data-style~="cinema"] .media { display: contents; }
+body[data-style~="cinema"] .video { grid-area: video; aspect-ratio: auto; height: 100%; border: 0; border-radius: calc(var(--radius) * 1.4); }
+body[data-style~="cinema"] .credit { grid-area: credit; margin: 0; }
+body[data-style~="cinema"] .dose { grid-area: dose; }
+body[data-style~="cinema"] .dose div { padding: calc(var(--u) * .7) calc(var(--u) * 1.1); }
+body[data-style~="cinema"] .dose .num { font-size: calc(var(--u) * 3); }
+body[data-style~="cinema"] .note { grid-area: note1; }
+body[data-style~="cinema"] .note + .note { grid-area: note2; }
+body[data-style~="cinema"] .teach.fit { grid-area: teach; }
+body[data-style~="cinema"] .teach h1 { font-size: 1.8em; }
 
 /* Scoreboard: huge sets, reps and rest across the top; video and steps below */
-body[data-style="scoreboard"] { --bg: #0d1220; --panel: #151c2e; --panel-2: #1b2338; --line: #26304a; --muted: #93a0bd; --accent: #ff5d3a; --accent-ink: #fff; }
-body[data-style="scoreboard"] .ex { grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
+body[data-style~="scoreboard"] { --bg: #0d1220; --panel: #151c2e; --panel-2: #1b2338; --line: #26304a; --muted: #93a0bd; --accent: #ff5d3a; --accent-ink: #fff; }
+body[data-style~="scoreboard"] .ex { grid-template-columns: minmax(0, 50fr) minmax(0, 50fr);
   grid-template-rows: auto minmax(0, 1fr) auto auto auto; grid-template-areas: "dose dose" "video teach" "credit teach" "note1 teach" "note2 teach"; column-gap: calc(var(--u) * 3); row-gap: calc(var(--u) * 1.2); }
-body[data-style="scoreboard"] .media { display: contents; }
-body[data-style="scoreboard"] .dose { grid-area: dose; background: none; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding-bottom: calc(var(--u) * .6); }
-body[data-style="scoreboard"] .dose div { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 1.6); }
-body[data-style="scoreboard"] .dose div:first-child { padding-left: 0; }
-body[data-style="scoreboard"] .dose .num { font-size: calc(var(--u) * 6.4); color: var(--text); }
-body[data-style="scoreboard"] .dose .label { font-size: calc(var(--u) * 2); color: var(--accent); }
-body[data-style="scoreboard"] .video { grid-area: video; aspect-ratio: auto; height: 100%; }
-body[data-style="scoreboard"] .credit { grid-area: credit; margin: 0; }
-body[data-style="scoreboard"] .note { grid-area: note1; }
-body[data-style="scoreboard"] .note + .note { grid-area: note2; }
-body[data-style="scoreboard"] .teach.fit { grid-area: teach; }
-body[data-style="scoreboard"] .steps li::before { border-radius: calc(var(--u) * .4); }
+body[data-style~="scoreboard"] .media { display: contents; }
+body[data-style~="scoreboard"] .dose { grid-area: dose; background: none; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; padding-bottom: calc(var(--u) * .6); }
+body[data-style~="scoreboard"] .dose div { display: flex; align-items: baseline; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 1.6); }
+body[data-style~="scoreboard"] .dose div:first-child { padding-left: 0; }
+body[data-style~="scoreboard"] .dose .num { font-size: calc(var(--u) * 6.4); color: var(--text); }
+body[data-style~="scoreboard"] .dose .label { font-size: calc(var(--u) * 2); color: var(--accent); }
+body[data-style~="scoreboard"] .video { grid-area: video; aspect-ratio: auto; height: 100%; }
+body[data-style~="scoreboard"] .credit { grid-area: credit; margin: 0; }
+body[data-style~="scoreboard"] .note { grid-area: note1; }
+body[data-style~="scoreboard"] .note + .note { grid-area: note2; }
+body[data-style~="scoreboard"] .teach.fit { grid-area: teach; }
+body[data-style~="scoreboard"] .steps li::before { border-radius: calc(var(--u) * .4); }
 
 /* Phone held upright: stack and scroll, and ask for landscape */
 .rotate { display: none; }
@@ -184,9 +184,11 @@ body[data-style="scoreboard"] .steps li::before { border-radius: calc(var(--u) *
 <noscript>Turn on JavaScript to use the slideshow.</noscript>
 <script>
 const DATA = __DATA__;
+// Looks are a colour scheme plus a layout, e.g. ?style=print,cinema. ?style=gym is the original dark look.
 const STYLES = ["print", "cinema", "scoreboard"];
-const style = new URLSearchParams(location.search).get("style");
-if (STYLES.includes(style)) document.body.dataset.style = style;
+const DEFAULT_STYLE = "print cinema";
+const asked = new URLSearchParams(location.search).get("style");
+document.body.dataset.style = asked === null ? DEFAULT_STYLE : asked.split(/[\s,]+/).filter(x => STYLES.includes(x)).join(" ");
 const app = document.getElementById("app");
 const ARROW_R = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const ARROW_L = '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
