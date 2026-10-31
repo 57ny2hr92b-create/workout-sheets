@@ -409,7 +409,12 @@ function clipOf(v) {
 function sources(ex) {
   const tv = (ex.video && ex.video.tv) || {}, out = [];
   if (tv.youtube_id && tv.status !== "bad") out.push({...clipOf(tv), label: "Demo"});
-  if (tv.backup && tv.backup.youtube_id && tv.backup.status !== "bad") out.push({...clipOf(tv.backup), label: out.length ? "Backup" : "Demo"});
+  if (tv.backup && tv.backup.youtube_id && tv.backup.status !== "bad") {
+    // A backup marked good plays first when the demo isn't marked good.
+    const first = tv.backup.status === "good" && tv.status !== "good";
+    out.splice(first ? 0 : out.length, 0, {...clipOf(tv.backup), label: out.length && !first ? "Backup" : "Demo"});
+    if (first && out.length > 1) out[1].label = "Other";
+  }
   if (tv.image) out.push({kind: "img", src: tv.image, label: "Photo"});
   if (tv.pictogram && PICTO[tv.pictogram]) out.push({kind: "pic", name: tv.pictogram, label: "Drawing"});
   if (!out.length) out.push({kind: "none", label: "Steps"});
