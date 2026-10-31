@@ -48,13 +48,15 @@
         "tv": {
           "youtube_id": "9W5KAqHfDe8",
           "src": "Fit Father Project",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "4YVgTSY2E38",
             "src": "Goblet Squat (Exercise Library)",
             "status": "unreviewed"
           },
-          "pictogram": "squat"
+          "pictogram": "squat",
+          "start": 86,
+          "end": 132
         }
       }
     },
@@ -78,13 +80,15 @@
         "tv": {
           "youtube_id": "gbPURTSxQLY",
           "src": "Bodybuilding.com",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "FFaU5ZxOyy8",
             "src": "Master the Negative Pull-Up in 30 Seconds",
             "status": "unreviewed"
           },
-          "pictogram": "pullup"
+          "pictogram": "pullup",
+          "start": 3,
+          "end": 53
         }
       }
     },
@@ -107,13 +111,15 @@
         "tv": {
           "youtube_id": "WLTU1j7Ur8M",
           "src": "BarBend",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "M0tN99QgPyU",
             "src": "How to Do the Flat Dumbbell Bench Press",
             "status": "unreviewed"
           },
-          "pictogram": "bench"
+          "pictogram": "bench",
+          "start": 14,
+          "end": 218
         }
       }
     },
@@ -136,13 +142,15 @@
         "tv": {
           "youtube_id": "KN5vN3JskqI",
           "src": "Steev",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "KYIJdN2gBmQ",
             "src": "Dumbbell Romanian Deadlift Tutorial",
             "status": "unreviewed"
           },
-          "pictogram": "rdl"
+          "pictogram": "rdl",
+          "start": 0,
+          "end": 8
         }
       }
     },
@@ -170,7 +178,9 @@
           "backup": {
             "youtube_id": "B_x0tp3HIbk",
             "src": "How To Do a Proper Kettlebell Swing",
-            "status": "unreviewed"
+            "status": "good",
+            "start": 61,
+            "end": 170
           },
           "pictogram": "swing"
         }
@@ -199,7 +209,9 @@
           "backup": {
             "youtube_id": "sDbMsk3d6F4",
             "src": "How To Do A Kettlebell Deadlift",
-            "status": "unreviewed"
+            "status": "good",
+            "start": 60,
+            "end": 181
           },
           "pictogram": "kb-deadlift"
         }
@@ -224,13 +236,15 @@
         "tv": {
           "youtube_id": "fURsHPHgssI",
           "src": "The Healthy Habit",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "S_kOe9mOLlg",
             "src": "How to Do a Single Arm Dumbbell Row",
             "status": "unreviewed"
           },
-          "pictogram": "row"
+          "pictogram": "row",
+          "start": 1,
+          "end": 4
         }
       }
     },
@@ -253,13 +267,15 @@
         "tv": {
           "youtube_id": "8bfJ3sfUTos",
           "src": "Bodybuilding.com",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "ljyqdC4ydrM",
             "src": "Schaum Fitness",
             "status": "unreviewed"
           },
-          "pictogram": "incline"
+          "pictogram": "incline",
+          "start": 0,
+          "end": 16
         }
       }
     },
@@ -282,13 +298,15 @@
         "tv": {
           "youtube_id": "5VG4UnfA7Bk",
           "src": "Steev",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "Ca9P1Te6vvA",
             "src": "DB Split Squat (Exercise Library)",
             "status": "unreviewed"
           },
-          "pictogram": "split-squat"
+          "pictogram": "split-squat",
+          "start": 0,
+          "end": 6
         }
       },
       "first_load": {
@@ -315,13 +333,15 @@
         "tv": {
           "youtube_id": "z7E_YU9P1jU",
           "src": "Dr. Carl Baird",
-          "status": "unreviewed",
+          "status": "good",
           "backup": {
             "youtube_id": "OalyeWGbRb0",
             "src": "Farmer's Carry 30 Sec Tutorial",
             "status": "unreviewed"
           },
-          "pictogram": "carry"
+          "pictogram": "carry",
+          "start": 38,
+          "end": 121
         }
       }
     }
