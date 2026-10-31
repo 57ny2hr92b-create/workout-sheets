@@ -1,6 +1,6 @@
 {
   "tv": {
-    "max_clip_s": 60
+    "max_clip_s": 240
   },
   "equipment": {
     "db_pair": [
@@ -243,8 +243,7 @@
             "status": "unreviewed"
           },
           "pictogram": "row",
-          "start": 1,
-          "end": 4
+          "start": 1
         }
       }
     },

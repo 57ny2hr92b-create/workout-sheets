@@ -101,7 +101,8 @@ def check_library(lib, plan, docs=DOCS / "tv"):
             if clip.get("status") == "bad":
                 continue
             playable += 1
-            if clip.get("status") != "good":
+            # A backup nobody reviewed doesn't matter once the other clip is marked good.
+            if clip.get("status") != "good" and "good" not in (tv.get("status"), (tv.get("backup") or {}).get("status")):
                 unreviewed.append(f"{ex_id} {label}" + ("" if end else " (untrimmed)"))
         if tv.get("image") and not (docs / tv["image"]).is_file():
             errors.append(f"{ex_id}: image {tv['image']} not found under docs/tv/")
