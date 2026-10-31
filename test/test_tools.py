@@ -125,6 +125,7 @@ class Library(unittest.TestCase):
 
     def test_long_clip_is_a_note(self):
         lib = lib_copy()
+        lib["tv"]["max_clip_s"] = 60
         lib["exercises"]["goblet-squat"]["video"]["tv"].update(start=0, end=200, status="good")
         _, notes = build_site.check_library(lib, PLAN)
         self.assertTrue(any("200s; the TV cuts it to 60s" in n for n in notes))

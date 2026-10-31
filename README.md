@@ -40,7 +40,7 @@ Each exercise's TV media lives in `library.json` under `video.tv`:
 }
 ```
 
-- `start` and `end` (seconds) trim the clip, which loops between them. No clip ever plays longer than `tv.max_clip_s` at the top of `library.json` (60 s): an untrimmed video plays its first 60 s.
+- `start` and `end` (seconds) trim the clip, which loops between them. No clip ever plays longer than `tv.max_clip_s` at the top of `library.json` (240 s, raised from 60 s on 2026-10-31 so Keifer's longer clips play in full): an untrimmed video plays its first 240 s.
 - `status` is `unreviewed`, `good` or `bad`. A bad video is skipped. When a clip is marked good, the printed QR code's short link opens that clip at its start time.
 - The slide tries the demo, then the backup, then a photo (`image`, a file under `docs/tv/`), then a built-in drawing (`pictogram`: squat, pullup, bench, incline, rdl, kb-deadlift, swing, row, split-squat, carry). If YouTube refuses to play a video on another site, the slide switches to the next one by itself. Buttons under the video switch by hand.
 - To use your own photo instead, put it in `docs/tv/img/` and set `image`.
